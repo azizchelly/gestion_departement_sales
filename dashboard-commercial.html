@@ -200,17 +200,17 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Mon espace</div>
-    <a class="nav-item active" href="dashboard-commercial.html"><span class="nav-ic">📊</span>Mon Dashboard</a>
-    <a class="nav-item" href="contacts.html"><span class="nav-ic">🏢</span>Mes Clients</a>
+    <a class="nav-item active" href="javascript:void(0)" onclick="goTo('dashboard-commercial')"><span class="nav-ic">📊</span>Mon Dashboard</a>
+    <a class="nav-item" href="javascript:void(0)" onclick="goTo('contacts')"><span class="nav-ic">🏢</span>Mes Clients</a>
     <a class="nav-item" href="javascript:void(0)" onclick="document.getElementById('pipeline')?.scrollIntoView({behavior:'smooth'})"><span class="nav-ic">🔀</span>Mon Pipeline</a>
  
     <div class="sb-section">Commercial</div>
-    <a class="nav-item" href="nouveau-devis.html"><span class="nav-ic">📄</span>Mes Devis<span class="nav-badge">2</span></a>
-    <a class="nav-item" href="facture-preview.html"><span class="nav-ic">🧾</span>Mes Factures</a>
+    <a class="nav-item" href="javascript:void(0)" onclick="goTo('nouveau-devis')"><span class="nav-ic">📄</span>Mes Devis<span class="nav-badge">2</span></a>
+    <a class="nav-item" href="javascript:void(0)" onclick="goTo('facture-preview')"><span class="nav-ic">🧾</span>Mes Factures</a>
     <a class="nav-item" href="#"><span class="nav-ic">📑</span>Mes Contrats</a>
  
     <div class="sb-section">Catalogue</div>
-    <a class="nav-item" href="contacts.html"><span class="nav-ic">📦</span>Services & Tarifs</a>
+    <a class="nav-item" href="javascript:void(0)" onclick="goTo('contacts')"><span class="nav-ic">📦</span>Services & Tarifs</a>
   </nav>
   <div class="sb-foot">
     <button class="logout-btn" onclick="window.location.href='login.html'">
@@ -508,6 +508,11 @@ function saveRemise() {
   showToast(`✅ Remise de ${pct}% appliquée sur DEV-2026-007`, 'success');
 }
 </script>
+ 
+<script>
+function goTo(page) {
+  window.location.href = page + '.html';
+}
+</script>
 </body>
 </html>
- 
