@@ -143,6 +143,16 @@ body.role-commercial .mobile-logo h2 span{color:var(--emerald)}
 .toast.error{background:linear-gradient(135deg,#DC2626,#991B1B)}
 .toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+<script>
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+const sb = supabase.createClient(SB_URL, SB_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true },
+  realtime: { params: { eventsPerSecond: 10 } },
+  global: { fetch: fetch.bind(globalThis) }
+});
+</script>
 </head>
 <body>
 
@@ -435,26 +445,57 @@ async function login() {
   if (!validate()) return;
   const btn = document.getElementById('loginBtn');
   btn.classList.add('loading'); btn.disabled = true;
-  await new Promise(r => setTimeout(r, 1400));
+
   const email = document.getElementById('email').value.trim().toLowerCase();
   const pass  = document.getElementById('password').value;
-  const user  = DEMO_USERS.find(u => u.email === email && u.password === pass && u.role === currentRole);
-  btn.classList.remove('loading'); btn.disabled = false;
-  if (user) {
-    // Sauvegarder le rôle pour toutes les pages
-    localStorage.setItem('sf_role', user.role);
-    localStorage.setItem('sf_user', user.name);
-    localStorage.setItem('sf_email', user.email);
-    showToast(`✅ Bienvenue, ${user.name} ! Redirection…`, 'success');
+
+  try {
+    // Connexion via Supabase Auth
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+
+    if (error) {
+      // Fallback comptes demo si Supabase échoue
+      const DEMO = [
+        { email:'admin@salesflow.tn',      password:'Admin2026!',  role:'admin',      name:'Sales Manager' },
+        { email:'commercial@salesflow.tn', password:'Sales2026!',  role:'commercial', name:'Commercial Demo' },
+      ];
+      const demo = DEMO.find(u => u.email===email && u.password===pass && u.role===currentRole);
+      if (demo) {
+        localStorage.setItem('sf_role', demo.role);
+        localStorage.setItem('sf_user', demo.name);
+        localStorage.setItem('sf_email', demo.email);
+        btn.classList.remove('loading'); btn.disabled = false;
+        showToast("✅ Bienvenue, " + demo.name + " !", 'success');
+        setTimeout(() => {
+          window.location.href = demo.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+        }, 1000);
+        return;
+      }
+      throw error;
+    }
+
+    // Récupérer le rôle depuis les métadonnées ou la table profiles
+    const role = data.user?.user_metadata?.role || currentRole;
+    const name = data.user?.user_metadata?.full_name || data.user?.email?.split('@')[0] || 'Utilisateur';
+
+    localStorage.setItem('sf_role', role);
+    localStorage.setItem('sf_user', name);
+    localStorage.setItem('sf_email', email);
+    localStorage.setItem('sf_token', data.session?.access_token || '');
+
+    btn.classList.remove('loading'); btn.disabled = false;
+    showToast("✅ Bienvenue, " + name + " !", 'success');
     setTimeout(() => {
-      window.location.href = user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
-    }, 1200);
-  } else {
+      window.location.href = role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+    }, 1000);
+
+  } catch(e) {
+    btn.classList.remove('loading'); btn.disabled = false;
     document.getElementById('err-global').classList.add('show');
     document.getElementById('email').style.borderColor = 'var(--error)';
     document.getElementById('password').style.borderColor = 'var(--error)';
     shake(document.querySelector('.form-wrap'));
-    showToast('❌ Identifiants incorrects ou rôle non correspondant', 'error');
+    showToast('❌ Email ou mot de passe incorrect', 'error');
   }
 }
 
@@ -498,23 +539,21 @@ async function sendAdminReset() {
   const email = document.getElementById('forgot-admin-email').value.trim().toLowerCase();
   const errEl = document.getElementById('err-forgot-admin');
   errEl.classList.remove('show');
-
-  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-    errEl.classList.add('show'); return;
+  if (!email || !/^[^@]+@[^@]+[.][^@]+$/.test(email)) { errEl.classList.add('show'); return; }
+  try {
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/login.html'
+    });
+    if (error) throw error;
+    showToast('📧 Lien de réinitialisation envoyé à ' + email, 'success');
+    setTimeout(() => {
+      document.getElementById('admin-step1').style.display = 'none';
+      document.getElementById('admin-step2').style.display = 'block';
+    }, 1000);
+  } catch(e) {
+    showToast('❌ Email non reconnu', 'error');
+    errEl.classList.add('show');
   }
-
-  const user = DEMO_USERS.find(u => u.email === email && u.role === 'admin');
-  if (!user) { errEl.classList.add('show'); showToast('❌ Email Admin non reconnu', 'error'); return; }
-
-  await new Promise(r => setTimeout(r, 1400));
-
-  /* En production → Supabase envoie un lien magique de reset */
-  showToast('📧 Lien envoyé à ' + email, 'success');
-  /* Simule la réception du lien → affiche l'étape 2 */
-  setTimeout(() => {
-    document.getElementById('admin-step1').style.display = 'none';
-    document.getElementById('admin-step2').style.display = 'block';
-  }, 1200);
 }
 
 async function confirmReset() {
