@@ -1,6 +1,64 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script>
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+
+async function sbGet(table, filters) {
+  let url = SB_URL + "/rest/v1/" + table + "?order=id.asc";
+  if (filters) url += "&" + filters;
+  const r = await fetch(url, {
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+async function sbInsert(table, data) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table, {
+    method: "POST",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json", "Prefer": "return=representation"},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+async function sbUpdate(table, id, data) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method: "PATCH",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+async function sbDelete(table, id) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method: "DELETE",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+async function sbAuth(email, password) {
+  const r = await fetch(SB_URL + "/auth/v1/token?grant_type=password", {
+    method: "POST",
+    headers: {"apikey": SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify({ email, password })
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error_description || d.msg || "Erreur auth");
+  return d;
+}
+
+</script>
+
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SalesFlow Pro — Catalogue</title>
@@ -156,16 +214,7 @@ html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var
 .empty-ic{font-size:40px;margin-bottom:12px}
 .empty b{display:block;font-size:15px;color:var(--text);margin-bottom:4px}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
-<script>
-const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
-const sb = supabase.createClient(SB_URL, SB_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true },
-  realtime: { params: { eventsPerSecond: 10 } },
-  global: { fetch: fetch.bind(globalThis) }
-});
-</script>
+
 </head>
 <body>
 
@@ -303,326 +352,6 @@ const sb = supabase.createClient(SB_URL, SB_KEY, {
 </div>
 
 <div class="toast" id="toast"></div>
-
-<script>
-/* ══════════════════════════════════
-   RÔLE (simulated — remplacer par Supabase Auth)
-══════════════════════════════════ */
-// Lire le rôle depuis localStorage (mis par login.html)
-const ROLE = localStorage.getItem('sf_role') || 'admin';
-console.log('SalesFlow Catalogue - Rôle détecté:', ROLE);
-const USER_NAME = localStorage.getItem('sf_user') || 'Sales Manager';
-
-// Configurer l'UI selon le rôle
-function setupRole() {
-  const isAdmin = (localStorage.getItem('sf_role') || 'admin') === 'admin';
-  document.getElementById('sbAv').textContent    = USER_NAME.charAt(0).toUpperCase();
-  document.getElementById('sbAv').className      = 'sb-av ' + ROLE;
-  document.getElementById('sbName').textContent  = USER_NAME;
-  document.getElementById('sbRole').textContent  = isAdmin ? '🛡️ Admin' : '💼 Commercial';
-  document.getElementById('sbRole').className    = 'sb-role ' + ROLE;
-  document.getElementById('roleBadge').textContent = isAdmin ? '🛡️ Admin' : '💼 Commercial';
-  document.getElementById('roleBadge').className = 'role-badge ' + ROLE;
-  document.getElementById('roleDesc').textContent = isAdmin
-    ? 'Gestion complète — prix, ajout, suppression'
-    : 'Consultation & sélection pour vos devis/factures';
-  document.getElementById('btnAdd').style.display = isAdmin ? 'block' : 'none';
-  if (!isAdmin) {
-    document.getElementById('adminSection').style.display = 'none';
-    document.getElementById('lkComptes').style.display = 'none';
-  }
-}
-
-/* ══════════════════════════════════
-   DONNÉES (localStorage)
-══════════════════════════════════ */
-const CATS = {
-  'Développement':       { ic:'💻', color:'#2E86C1', bg:'rgba(46,134,193,.12)' },
-  'Cybersécurité':       { ic:'🔒', color:'#DC2626', bg:'rgba(220,38,38,.1)' },
-  'Cloud & Infrastructure':{ ic:'☁️', color:'#7C3AED', bg:'rgba(124,58,237,.1)' },
-  'Formation':           { ic:'🎓', color:'#D97706', bg:'rgba(217,119,6,.1)' },
-  'Infogérance':         { ic:'🖥️', color:'#1E9E6A', bg:'rgba(30,158,106,.1)' },
-  'Conseil & Audit':     { ic:'📊', color:'#48C9B0', bg:'rgba(72,201,176,.12)' },
-  'Maintenance':         { ic:'🔧', color:'#6B7785', bg:'rgba(107,119,133,.1)' },
-  'Autre':               { ic:'📦', color:'#1E3A5F', bg:'rgba(30,58,95,.08)' },
-};
-
-async function loadProducts() {
-  try {
-    const { data, error } = await sb.from("catalogue").select("*").order("id");
-    if (error) throw error;
-    if (data && data.length > 0) {
-      // Mapper les colonnes Supabase vers notre format
-      return data.map(r => ({
-        id: r.id,
-        nom: r.nom,
-        cat: r.categorie,
-        desc: r.description,
-        prix: parseFloat(r.prix_unitaire) || 0,
-        unite: r.unite || "forfait",
-        statut: r.actif ? "actif" : "inactif"
-      }));
-    }
-  } catch(e) {
-    console.error("Erreur Supabase catalogue:", e);
-  }
-  return [];
-}
-
-async function saveProduct_SB(obj, editId) {
-  const row = {
-    nom: obj.nom,
-    categorie: obj.cat,
-    description: obj.desc,
-    prix_unitaire: obj.prix,
-    unite: obj.unite,
-    actif: obj.statut === "actif"
-  };
-  if (editId) {
-    const { error } = await sb.from("catalogue").update(row).eq("id", editId);
-    if (error) { showToast("Erreur mise à jour: " + error.message, "error"); return false; }
-  } else {
-    const { error } = await sb.from("catalogue").insert(row);
-    if (error) { showToast("Erreur ajout: " + error.message, "error"); return false; }
-  }
-  return true;
-}
-
-async function deleteProduct_SB(id) {
-  const { error } = await sb.from("catalogue").delete().eq("id", id);
-  if (error) { showToast("Erreur suppression: " + error.message, "error"); return false; }
-  return true;
-}
-
-async function toggleStatus_SB(id, actif) {
-  const { error } = await sb.from("catalogue").update({ actif }).eq("id", id);
-  if (error) { showToast("Erreur: " + error.message, "error"); return false; }
-  return true;
-}
-
-function saveProducts(p) {} // kept for compatibility
-let products = loadProducts();
-
-/* ══════════════════════════════════
-   FILTRES & RENDU
-══════════════════════════════════ */
-let activeCat = 'Tous';
-let panier = {}; // {id: {product, qty}}
-
-function renderCatFilter() {
-  const cats = ['Tous', ...new Set(products.map(p => p.cat).filter(Boolean))];
-  const wrap = document.getElementById('catFilter');
-  wrap.innerHTML = cats.map(c =>
-    `<button class="cat-btn ${c===activeCat?'on':''}" onclick="setCat('${c}')">${CATS[c]?.ic||'📦'} ${c}</button>`
-  ).join('');
-}
-
-function setCat(cat) { activeCat = cat; renderCatFilter(); renderProducts(); }
-
-function renderProducts() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = products.filter(p => {
-    const matchCat = activeCat === 'Tous' || p.cat === activeCat;
-    const matchQ   = !q || p.nom.toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q);
-    return matchCat && matchQ;
-  });
-
-  const grid = document.getElementById('productsGrid');
-  const isAdmin = (localStorage.getItem('sf_role') || 'admin') === 'admin';
-
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ic">🔍</div><b>Aucun service trouvé</b>Essaie une autre recherche</div>`;
-    return;
-  }
-
-  grid.innerHTML = filtered.map(p => {
-    const cfg = CATS[p.cat] || CATS['Autre'];
-    const inPanier = !!panier[p.id];
-    const inactive = p.statut !== 'actif';
-    return `
-    <div class="prod-card ${inactive?'prod-inactive':''}" id="pc-${p.id}">
-      ${inactive ? '<div class="inactive-badge">Inactif</div>' : ''}
-      <div class="prod-cat-bar" style="background:${cfg.color}"></div>
-      <div class="prod-body">
-        <div class="prod-head">
-          <div class="prod-ic" style="background:${cfg.bg}">${cfg.ic}</div>
-          ${isAdmin ? `<div class="prod-actions-top">
-            <button class="ic-btn" title="Modifier" onclick="editProduct(${p.id})">✏️</button>
-            <button class="ic-btn del" title="Supprimer" onclick="deleteProduct(${p.id})">🗑️</button>
-            <button class="ic-btn" title="${p.statut==='actif'?'Désactiver':'Activer'}" onclick="toggleStatus(${p.id})">${p.statut==='actif'?'⏸️':'▶️'}</button>
-          </div>` : ''}
-        </div>
-        <div style="font-size:10px;font-weight:700;color:${cfg.color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">${p.cat||'—'}</div>
-        <div class="prod-name">${p.nom}</div>
-        <div class="prod-desc">${p.desc||''}</div>
-        <div class="prod-footer">
-          <div>
-            <div class="prod-price">${fmt(p.prix)} <small>DT</small></div>
-            <div class="prod-unite">/ ${p.unite}</div>
-          </div>
-          ${!isAdmin ? `<button class="prod-select-btn ${inPanier?'added':'add'}" onclick="togglePanier(${p.id})">
-            ${inPanier ? '✓ Ajouté' : '+ Sélectionner'}
-          </button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  updateStats();
-}
-
-/* ══════════════════════════════════
-   STATS
-══════════════════════════════════ */
-function updateStats() {
-  const actifs = products.filter(p => p.statut === 'actif');
-  const cats   = new Set(products.map(p => p.cat).filter(Boolean));
-  const moy    = actifs.length ? actifs.reduce((s,p) => s+p.prix, 0) / actifs.length : 0;
-  document.getElementById('statTotal').textContent = products.length;
-  document.getElementById('statActif').textContent = actifs.length;
-  document.getElementById('statCats').textContent  = cats.size;
-  document.getElementById('statPrix').textContent  = fmt(moy) + ' DT';
-}
-
-/* ══════════════════════════════════
-   ADMIN : CRUD
-══════════════════════════════════ */
-function openModal(id = null) {
-  document.getElementById('editId').value   = id || '';
-  document.getElementById('modalTitle').textContent = id ? 'Modifier le service' : 'Ajouter un service';
-  if (id) {
-    const p = products.find(x => x.id === id);
-    document.getElementById('f_nom').value    = p.nom;
-    document.getElementById('f_cat').value    = p.cat;
-    document.getElementById('f_desc').value   = p.desc;
-    document.getElementById('f_prix').value   = p.prix;
-    document.getElementById('f_unite').value  = p.unite;
-    document.getElementById('f_statut').value = p.statut;
-  } else {
-    ['f_nom','f_desc','f_prix'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('f_cat').value    = '';
-    document.getElementById('f_unite').value  = 'forfait';
-    document.getElementById('f_statut').value = 'actif';
-  }
-  document.getElementById('overlay').classList.add('show');
-}
-
-function closeModal() { document.getElementById('overlay').classList.remove('show'); }
-
-async function saveProduct() {
-  const nom  = document.getElementById("f_nom").value.trim();
-  const prix = parseFloat(document.getElementById("f_prix").value);
-  if (!nom)           { showToast("Nom obligatoire","error"); return; }
-  if (!prix || prix<=0){ showToast("Prix doit être > 0","error"); return; }
-  const editId = document.getElementById("editId").value;
-  const obj = {
-    nom, prix,
-    cat:    document.getElementById("f_cat").value,
-    desc:   document.getElementById("f_desc").value,
-    unite:  document.getElementById("f_unite").value,
-    statut: document.getElementById("f_statut").value,
-  };
-  const ok = await saveProduct_SB(obj, editId || null);
-  if (!ok) return;
-  showToast(editId ? "✅ Service mis à jour" : "✅ Service ajouté", "success");
-  closeModal();
-  products = await loadProducts();
-  renderCatFilter();
-  renderProducts();
-}
-
-function editProduct(id) { if (ROLE !== 'admin') return; openModal(id); }
-
-async function deleteProduct(id) {
-  if (ROLE !== "admin") return;
-  const p = products.find(x => x.id === id);
-  if (!confirm("Supprimer " + p.nom + " du catalogue ?")) return;
-  const ok = await deleteProduct_SB(id);
-  if (!ok) return;
-  products = await loadProducts();
-  renderCatFilter();
-  renderProducts();
-  showToast("🗑️ Service supprimé", "warn");
-}
-
-async function toggleStatus(id) {
-  if (ROLE !== "admin") return;
-  const p = products.find(x => x.id === id);
-  const newActif = p.statut !== "actif";
-  const ok = await toggleStatus_SB(id, newActif);
-  if (!ok) return;
-  products = await loadProducts();
-  renderProducts();
-  showToast(newActif ? "✅ Service activé" : "⏸️ Service désactivé", "info");
-}
-
-/* ══════════════════════════════════
-   COMMERCIAL : PANIER SÉLECTION
-══════════════════════════════════ */
-function togglePanier(id) {
-  if (panier[id]) {
-    delete panier[id];
-  } else {
-    const p = products.find(x => x.id === id);
-    panier[id] = { product: p, qty: 1 };
-  }
-  renderProducts();
-  updatePanierBar();
-}
-
-function updatePanierBar() {
-  const count = Object.keys(panier).length;
-  const total = Object.values(panier).reduce((s,i) => s + i.product.prix * i.qty, 0);
-  document.getElementById('panierCount').textContent = count + ' service(s) sélectionné(s)';
-  document.getElementById('panierTotal').textContent = fmt(total) + ' DT';
-  document.getElementById('panierBar').classList.toggle('show', count > 0);
-}
-
-function clearPanier() {
-  panier = {};
-  renderProducts();
-  updatePanierBar();
-}
-
-function usePanier(dest) {
-  // Sauvegarder la sélection dans localStorage pour le devis/facture
-  const selection = Object.values(panier).map(i => ({
-    service: i.product.nom,
-    qty: i.qty,
-    price: i.product.prix,
-    unite: i.product.unite
-  }));
-  localStorage.setItem('sf_selection_catalogue', JSON.stringify(selection));
-  showToast('📄 Redirection vers ' + (dest === 'devis' ? 'le devis' : 'la facture') + '…', 'success');
-  setTimeout(() => {
-    window.location.href = dest === 'devis' ? 'nouveau-devis.html' : 'facture-preview.html';
-  }, 800);
-}
-
-/* ══════════════════════════════════
-   FORMAT & TOAST
-══════════════════════════════════ */
-function fmt(n) {
-  return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:0,maximumFractionDigits:0}).format(parseFloat(n)||0);
-}
-
-function showToast(msg, type='info') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast ' + type;
-  void t.offsetWidth; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-/* ══════════════════════════════════
-   INIT
-══════════════════════════════════ */
-(async function() {
-  products = await loadProducts();
-  setupRole();
-  renderCatFilter();
-  renderProducts();
-})();
-</script>
 
 <script>
 (function(){
