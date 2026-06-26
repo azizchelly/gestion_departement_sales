@@ -441,6 +441,10 @@ async function login() {
   const user  = DEMO_USERS.find(u => u.email === email && u.password === pass && u.role === currentRole);
   btn.classList.remove('loading'); btn.disabled = false;
   if (user) {
+    // Sauvegarder le rôle pour toutes les pages
+    localStorage.setItem('sf_role', user.role);
+    localStorage.setItem('sf_user', user.name);
+    localStorage.setItem('sf_email', user.email);
     showToast(`✅ Bienvenue, ${user.name} ! Redirection…`, 'success');
     setTimeout(() => {
       window.location.href = user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
