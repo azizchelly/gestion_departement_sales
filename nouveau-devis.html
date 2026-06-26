@@ -205,6 +205,17 @@ label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-trans
 .toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
 .toast.warn{background:linear-gradient(135deg,var(--amber),#B45309)}
 </style>
+
+<style id="printStyle">
+@media print {
+  .sidebar, .topbar, .content, .stepper, .overlay, .toast, #printStyle { display: none !important; }
+  .preview-modal { position: fixed !important; inset: 0 !important; max-width: 100% !important; max-height: 100% !important; border-radius: 0 !important; box-shadow: none !important; margin: 0 !important; overflow: visible !important; }
+  .preview-head { display: none !important; }
+  .doc { padding: 10px !important; }
+  body { background: white !important; }
+  .main { margin-left: 0 !important; }
+}
+</style>
 </head>
 <body>
 
@@ -462,7 +473,7 @@ label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-trans
     <div class="preview-head">
       <h3>📄 Aperçu du devis</h3>
       <div style="display:flex;gap:8px">
-        <button onclick="printDevis()" style="background:linear-gradient(135deg,var(--ok),#13784f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">📥 Télécharger PDF</button>
+        <button onclick="window.print()" style="background:linear-gradient(135deg,var(--ok),#13784f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🖨️ Imprimer / PDF</button>
         <button onclick="closePreview()">✕ Fermer</button>
       </div>
     </div>
@@ -714,13 +725,7 @@ function openPreview() {
 function closePreview() { document.getElementById('previewOverlay').classList.remove('show'); }
 
 /* ═══ GÉNÉRATION PDF (jsPDF) ═══ */
-function printDevis() {
-  const d = buildDevis('envoyé');
-  if (!d.client) { showToast('⚠️ Sélectionne un client avant de télécharger','error'); return; }
-
-  showToast('⏳ Génération du PDF…','info');
-  setTimeout(() => generatePDF(d), 100);
-}
+function printDevis() { window.print(); }
 
 function generatePDF(d) {
   const { jsPDF } = window.jspdf;
@@ -1383,49 +1388,35 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
 </script>
 
 <script>
-(function() {
-  const role = localStorage.getItem('sf_role') || 'admin';
-  const name = localStorage.getItem('sf_user') || 'Utilisateur';
-  const isAdmin = role === 'admin';
-  const dash = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+(function(){
+  var role = localStorage.getItem('sf_role') || 'admin';
+  var uname = localStorage.getItem('sf_user') || 'Utilisateur';
+  var isAdmin = role === 'admin';
+  var dash = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
 
-  // User info sidebar
-  const av = document.getElementById('sbAv');
-  if(av){ av.textContent=name.charAt(0).toUpperCase(); av.style.background=isAdmin?'linear-gradient(135deg,#2E86C1,#1E3A5F)':'linear-gradient(135deg,#48C9B0,#1A9E80)'; }
-  const sn=document.getElementById('sbName'); if(sn) sn.textContent=name;
-  const sr=document.getElementById('sbRole'); if(sr){ sr.textContent=isAdmin?'🛡️ Admin':'💼 Commercial'; }
-
-  // Nav dynamique
-  const nav=document.getElementById('sideNav');
-  if(!nav) return;
-  nav.innerHTML=`
-    <div class="sb-sec">Principal</div>
-    <a class="nav-a" href="${dash}"><span class="nav-ic">📊</span>Dashboard</a>
-    <a class="nav-a" href="contacts.html"><span class="nav-ic">👥</span>${isAdmin?'Contacts':'Mes Clients'}</a>
-    <div class="sb-sec">Commercial</div>
-    <a class="nav-a" href="nouveau-devis.html"><span class="nav-ic">📄</span>${isAdmin?'Devis':'Mes Devis'}</a>
-    <a class="nav-a" href="facture-preview.html"><span class="nav-ic">🧾</span>${isAdmin?'Factures':'Mes Factures'}</a>
-    <a class="nav-a" href="analyse-bon-commande.html"><span class="nav-ic">📋</span>Bons de commande</a>
-    <a class="nav-a" href="catalogue.html"><span class="nav-ic">📦</span>Catalogue</a>
-    ${isAdmin?`<div class="sb-sec">Admin</div><a class="nav-a" href="admin-comptes.html"><span class="nav-ic">🔐</span>Comptes</a>`:''}
-  `;
-
-  // Activer le lien courant
-  const cur=window.location.pathname.split('/').pop();
-  nav.querySelectorAll('.nav-a').forEach(a=>{
-    if(a.getAttribute('href')===cur) a.classList.add('active');
-  });
-
-  // Bouton retour dashboard
-  const btnBack=document.getElementById('btnBack');
-  if(btnBack) btnBack.href=dash;
-
-  // Si admin requis et pas admin → rediriger
-  const requireAdmin=document.body.getAttribute('data-require-admin');
-  if(requireAdmin==='true' && !isAdmin){
-    alert('Accès réservé à l'Admin');
-    window.location.href=dash;
+  var av = document.getElementById('sbAv');
+  if(av){
+    av.textContent = uname.charAt(0).toUpperCase();
+    av.style.background = isAdmin
+      ? 'linear-gradient(135deg,#2E86C1,#1E3A5F)'
+      : 'linear-gradient(135deg,#48C9B0,#1A9E80)';
   }
+  var sn = document.getElementById('sbName'); if(sn) sn.textContent = uname;
+  var sr = document.getElementById('sbRole'); if(sr) sr.textContent = isAdmin ? 'Admin' : 'Commercial';
+
+  var nav = document.getElementById('sideNav');
+  if(!nav) return;
+
+  nav.innerHTML =
+    '<div class="sb-sec">Principal</div>' +
+    '<a class="nav-a" href="' + dash + '"><span class="nav-ic">&#128202;</span>Dashboard</a>' +
+    '<a class="nav-a" href="contacts.html"><span class="nav-ic">&#128101;</span>' + (isAdmin ? 'Contacts' : 'Mes Clients') + '</a>' +
+    '<div class="sb-sec">Commercial</div>' +
+    '<a class="nav-a active" href="nouveau-devis.html"><span class="nav-ic">&#128196;</span>' + (isAdmin ? 'Devis' : 'Mes Devis') + '</a>' +
+    '<a class="nav-a " href="facture-preview.html"><span class="nav-ic">&#129534;</span>' + (isAdmin ? 'Factures' : 'Mes Factures') + '</a>' +
+    '<a class="nav-a " href="analyse-bon-commande.html"><span class="nav-ic">&#128203;</span>Bons de commande</a>' +
+    '<a class="nav-a " href="catalogue.html"><span class="nav-ic">&#128230;</span>Catalogue</a>' +
+    (isAdmin ? '<div class="sb-sec">Admin</div><a class="nav-a " href="admin-comptes.html"><span class="nav-ic">&#128274;</span>Comptes</a>' : '');
 })();
 </script>
 </body>
