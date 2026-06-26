@@ -165,22 +165,14 @@ html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var
     <div class="sb-logo"><div class="logo-ic">SF</div><div class="logo-txt">Sales<span>Flow</span> Pro</div></div>
   </div>
   <div class="sb-user">
-    <div class="sb-av" id="sbAv">A</div>
-    <div><div class="sb-name" id="sbName">Utilisateur</div><div class="sb-role" id="sbRole"></div></div>
+    <div id="sbAv" style="width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#2E86C1,#1E3A5F);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0">A</div>
+    <div>
+      <div id="sbName" style="font-size:13px;font-weight:700;color:#fff">Utilisateur</div>
+      <div id="sbRole" style="font-size:10px;color:#48C9B0;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px"></div>
+    </div>
   </div>
-  <nav class="sb-nav">
-    <div class="sb-sec">Principal</div>
-    <a class="nav-a" href="dashboard-admin.html" id="lkDash"><span class="nav-ic">📊</span>Dashboard</a>
-    <a class="nav-a" href="contacts.html"><span class="nav-ic">👥</span>Contacts</a>
-    <a class="nav-a" href="javascript:void(0)" onclick="document.getElementById('pipeline')?.scrollIntoView({behavior:'smooth'})"><span class="nav-ic">🔀</span>Pipeline</a>
-    <div class="sb-sec">Commercial</div>
-    <a class="nav-a" href="nouveau-devis.html"><span class="nav-ic">📄</span>Devis</a>
-    <a class="nav-a" href="facture-preview.html"><span class="nav-ic">🧾</span>Factures</a>
-    <a class="nav-a" href="analyse-bon-commande.html"><span class="nav-ic">📋</span>Bons de commande</a>
-    <a class="nav-a active" href="catalogue.html"><span class="nav-ic">📦</span>Catalogue</a>
-    <div class="sb-sec" id="adminSection">Admin</div>
-    <a class="nav-a" href="admin-comptes.html" id="lkComptes"><span class="nav-ic">🔐</span>Comptes</a>
-  </nav>
+  </div>
+  <nav class="sb-nav" id="sideNav"></nav>
   <div class="sb-foot">
     <button class="logout" onclick="window.location.href='login.html'">🚪 Se déconnecter</button>
   </div>
@@ -195,7 +187,7 @@ html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var
     </div>
     <div class="tb-r">
       <span class="role-badge" id="roleBadge"></span>
-      <button class="tbtn ghost" onclick="window.location.href='dashboard-admin.html'" id="btnBack">← Dashboard</button>
+      <button class="tbtn ghost" onclick="window.location.href=(localStorage.getItem('sf_role')=='commercial'?'dashboard-commercial.html':'dashboard-admin.html')">← Dashboard</button>
       <button class="tbtn primary" id="btnAdd" onclick="openModal()" style="display:none">＋ Ajouter un service</button>
     </div>
   </div>
@@ -307,7 +299,7 @@ html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var
    RÔLE (simulated — remplacer par Supabase Auth)
 ══════════════════════════════════ */
 // Lire le rôle depuis localStorage (mis par login.html)
-const ROLE = localStorage.getItem('sf_role') || 'admin'; // 'admin' ou 'commercial'
+const ROLE = localStorage.getItem('sf_role') || 'admin';
 const USER_NAME = localStorage.getItem('sf_user') || 'Sales Manager';
 
 // Configurer l'UI selon le rôle
@@ -324,8 +316,6 @@ function setupRole() {
     ? 'Gestion complète — prix, ajout, suppression'
     : 'Consultation & sélection pour vos devis/factures';
   document.getElementById('btnAdd').style.display = isAdmin ? 'block' : 'none';
-  document.getElementById('btnBack').href = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
-  document.getElementById('lkDash').href = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
   if (!isAdmin) {
     document.getElementById('adminSection').style.display = 'none';
     document.getElementById('lkComptes').style.display = 'none';
@@ -589,6 +579,39 @@ function showToast(msg, type='info') {
 setupRole();
 renderCatFilter();
 renderProducts();
+</script>
+
+<script>
+(function(){
+  var role = localStorage.getItem('sf_role') || 'admin';
+  var uname = localStorage.getItem('sf_user') || 'Utilisateur';
+  var isAdmin = role === 'admin';
+  var dash = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+
+  var av = document.getElementById('sbAv');
+  if(av){
+    av.textContent = uname.charAt(0).toUpperCase();
+    av.style.background = isAdmin
+      ? 'linear-gradient(135deg,#2E86C1,#1E3A5F)'
+      : 'linear-gradient(135deg,#48C9B0,#1A9E80)';
+  }
+  var sn = document.getElementById('sbName'); if(sn) sn.textContent = uname;
+  var sr = document.getElementById('sbRole'); if(sr) sr.textContent = isAdmin ? 'Admin' : 'Commercial';
+
+  var nav = document.getElementById('sideNav');
+  if(!nav) return;
+
+  nav.innerHTML =
+    '<div class="sb-sec">Principal</div>' +
+    '<a class="nav-a" href="' + dash + '"><span class="nav-ic">&#128202;</span>Dashboard</a>' +
+    '<a class="nav-a" href="contacts.html"><span class="nav-ic">&#128101;</span>' + (isAdmin ? 'Contacts' : 'Mes Clients') + '</a>' +
+    '<div class="sb-sec">Commercial</div>' +
+    '<a class="nav-a " href="nouveau-devis.html"><span class="nav-ic">&#128196;</span>' + (isAdmin ? 'Devis' : 'Mes Devis') + '</a>' +
+    '<a class="nav-a " href="facture-preview.html"><span class="nav-ic">&#129534;</span>' + (isAdmin ? 'Factures' : 'Mes Factures') + '</a>' +
+    '<a class="nav-a " href="analyse-bon-commande.html"><span class="nav-ic">&#128203;</span>Bons de commande</a>' +
+    '<a class="nav-a active" href="catalogue.html"><span class="nav-ic">&#128230;</span>Catalogue</a>' +
+    (isAdmin ? '<div class="sb-sec">Admin</div><a class="nav-a " href="admin-comptes.html"><span class="nav-ic">&#128274;</span>Comptes</a>' : '');
+})();
 </script>
 </body>
 </html>
