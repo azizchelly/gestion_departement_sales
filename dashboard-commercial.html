@@ -223,10 +223,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 
   <div class="content">
 
-    <!-- ALERTE : PAS DE CHANGEMENT DE MDP -->
-    <div class="blocked-msg">
-      🔒 <span>Tu ne peux pas modifier ton mot de passe. Pour tout changement, contacte ton Sales Manager.</span>
-    </div>
+
 
     <!-- OBJECTIF DU MOIS -->
     <div class="obj-banner">
@@ -538,7 +535,7 @@ function goTo(page) {
   nav.innerHTML =
     '<span style="'+SEC+'">PRINCIPAL</span>' +
     a(dash, '&#128202;', 'Dashboard') +
-    a('contacts.html', '&#128101;', isAdmin ? 'Contacts' : 'Mes Clients') +
+        (isAdmin ? a('contacts.html', '&#128101;', 'Contacts') : '') +
     '<span style="'+SEC+'">COMMERCIAL</span>' +
     a('nouveau-devis.html', '&#128196;', isAdmin ? 'Devis' : 'Mes Devis') +
     a('facture-preview.html', '&#129534;', isAdmin ? 'Factures' : 'Mes Factures') +
