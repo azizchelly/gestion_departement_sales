@@ -300,11 +300,12 @@ html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var
 ══════════════════════════════════ */
 // Lire le rôle depuis localStorage (mis par login.html)
 const ROLE = localStorage.getItem('sf_role') || 'admin';
+console.log('SalesFlow Catalogue - Rôle détecté:', ROLE);
 const USER_NAME = localStorage.getItem('sf_user') || 'Sales Manager';
 
 // Configurer l'UI selon le rôle
 function setupRole() {
-  const isAdmin = ROLE === 'admin';
+  const isAdmin = (localStorage.getItem('sf_role') || 'admin') === 'admin';
   document.getElementById('sbAv').textContent    = USER_NAME.charAt(0).toUpperCase();
   document.getElementById('sbAv').className      = 'sb-av ' + ROLE;
   document.getElementById('sbName').textContent  = USER_NAME;
@@ -339,10 +340,12 @@ const CATS = {
 function loadProducts() {
   const saved = localStorage.getItem('sf_catalogue');
   if (saved) {
-    const parsed = JSON.parse(saved);
-    if (parsed.length > 0) return parsed;
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch(e) {}
   }
-  // Données par défaut
+  // Données par défaut — chargées pour TOUS les rôles
   const defaults = [
     { id:1, nom:'Audit cybersécurité',          cat:'Cybersécurité',        desc:'Audit complet de sécurité du système d\'information',        prix:3500,  unite:'forfait', statut:'actif' },
     { id:2, nom:'Développement portail web',     cat:'Développement',        desc:'Conception et développement d\'un portail web sur mesure',    prix:4900,  unite:'forfait', statut:'actif' },
@@ -356,6 +359,7 @@ function loadProducts() {
     { id:10,nom:'Formation Cybersécurité',       cat:'Formation',            desc:'Sensibilisation et formation à la sécurité informatique',     prix:450,   unite:'jour',    statut:'actif' },
   ];
   localStorage.setItem('sf_catalogue', JSON.stringify(defaults));
+  console.log('Catalogue initialisé avec', defaults.length, 'services');
   return defaults;
 }
 function saveProducts(p) { localStorage.setItem('sf_catalogue', JSON.stringify(p)); }
@@ -386,7 +390,7 @@ function renderProducts() {
   });
 
   const grid = document.getElementById('productsGrid');
-  const isAdmin = ROLE === 'admin';
+  const isAdmin = (localStorage.getItem('sf_role') || 'admin') === 'admin';
 
   if (!filtered.length) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ic">🔍</div><b>Aucun service trouvé</b>Essaie une autre recherche</div>`;
@@ -579,6 +583,9 @@ function showToast(msg, type='info') {
 /* ══════════════════════════════════
    INIT
 ══════════════════════════════════ */
+// Forcer rechargement des produits
+products = loadProducts();
+console.log('Produits chargés:', products.length);
 setupRole();
 renderCatFilter();
 renderProducts();
