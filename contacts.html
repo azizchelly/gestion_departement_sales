@@ -1,6 +1,64 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script>
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+
+async function sbGet(table, filters) {
+  let url = SB_URL + "/rest/v1/" + table + "?order=id.asc";
+  if (filters) url += "&" + filters;
+  const r = await fetch(url, {
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+async function sbInsert(table, data) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table, {
+    method: "POST",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json", "Prefer": "return=representation"},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+async function sbUpdate(table, id, data) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method: "PATCH",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+async function sbDelete(table, id) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method: "DELETE",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+async function sbAuth(email, password) {
+  const r = await fetch(SB_URL + "/auth/v1/token?grant_type=password", {
+    method: "POST",
+    headers: {"apikey": SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify({ email, password })
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error_description || d.msg || "Erreur auth");
+  return d;
+}
+
+</script>
+
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SalesFlow Pro — Gestion des Contacts</title>
@@ -149,16 +207,7 @@ label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-trans
 .modal-foot .btn-close{background:var(--line);color:var(--text)}
 .modal-foot .btn-del{background:linear-gradient(135deg,var(--bad),#991B1B);color:#fff}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
-<script>
-const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
-const sb = supabase.createClient(SB_URL, SB_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true },
-  realtime: { params: { eventsPerSecond: 10 } },
-  global: { fetch: fetch.bind(globalThis) }
-});
-</script>
+
 </head>
 <body>
 
@@ -313,12 +362,9 @@ async function load(type) {
   if (!table) return [];
 
   try {
-    const { data, error } = await sb.from(table).select("*").order("id", {ascending:false});
-    if (error) {
-      console.error("Erreur Supabase [" + type + "]:", error.message);
-      // Fallback localStorage
-      return JSON.parse(localStorage.getItem("sf_"+type)||"[]");
-    }
+    let data, error;
+    try { data = await sbGet(table); } catch(e) { error = e; }
+    if (error) { console.error("Erreur ["+type+"]:", error.message||error); return JSON.parse(localStorage.getItem("sf_"+type)||"[]"); }
     return (data||[]).map(r => ({...r, type}));
   } catch(e) {
     console.error("Erreur chargement " + type, e.message);
