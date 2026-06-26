@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesFlow Pro — Catalogue</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1E3A5F;--accent:#2E86C1;--emerald:#48C9B0;
+  --violet:#7C3AED;--amber:#D97706;--ok:#1E9E6A;--bad:#DC2626;
+  --bg:#F0F3F8;--card:#fff;--text:#1F2933;--muted:#6B7785;--line:#E2E8F0;
+  --shadow:0 1px 3px rgba(30,58,95,.07),0 4px 20px rgba(30,58,95,.06);
+  --sb:240px;
+}
+html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sb);background:var(--brand);display:flex;flex-direction:column;z-index:100}
+.sb-head{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.logo-ic{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--emerald));display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff}
+.logo-txt{font-size:15px;font-weight:800;color:#fff}.logo-txt span{color:var(--emerald)}
+.sb-user{margin:12px 14px 0;padding:10px 12px;background:rgba(255,255,255,.07);border-radius:10px;display:flex;align-items:center;gap:10px}
+.sb-av{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.sb-av.admin{background:linear-gradient(135deg,var(--accent),var(--brand))}
+.sb-av.commercial{background:linear-gradient(135deg,var(--emerald),#1A9E80)}
+.sb-name{font-size:13px;font-weight:700;color:#fff}
+.sb-role{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+.sb-role.admin{color:var(--emerald)}.sb-role.commercial{color:var(--emerald)}
+.sb-nav{flex:1;padding:14px 8px;overflow-y:auto}
+.sb-sec{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin:14px 0 5px}
+.sb-sec:first-child{margin-top:0}
+.nav-a{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;text-decoration:none;margin-bottom:2px;transition:.15s;position:relative}
+.nav-a:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-a.active{background:rgba(46,134,193,.28);color:#fff;font-weight:700}
+.nav-a.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+.nav-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-foot{padding:12px 8px;border-top:1px solid rgba(255,255,255,.08)}
+.logout{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.45);font-size:13px;width:100%;background:none;border:none;font-family:inherit;transition:.15s}
+.logout:hover{background:rgba(220,38,38,.15);color:#fca5a5}
+
+/* MAIN */
+.main{margin-left:var(--sb);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--card);border-bottom:1px solid var(--line);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-l h1{font-size:17px;font-weight:800;color:var(--brand)}
+.tb-l p{font-size:11px;color:var(--muted);margin-top:1px}
+.tb-r{display:flex;gap:8px;align-items:center}
+.tbtn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:.15s}
+.tbtn.ghost{background:var(--bg);color:var(--brand);border:1px solid var(--line)}
+.tbtn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.tbtn.primary{background:linear-gradient(135deg,var(--accent),var(--brand));color:#fff}
+.tbtn.primary:hover{filter:brightness(1.07)}
+
+/* ROLE BADGE */
+.role-badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.role-badge.admin{background:rgba(46,134,193,.12);color:var(--accent)}
+.role-badge.commercial{background:rgba(72,201,176,.12);color:var(--ok)}
+
+/* CONTENT */
+.content{padding:22px 24px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+.stat-ic{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.stat-ic.blue{background:rgba(46,134,193,.12)}
+.stat-ic.green{background:rgba(72,201,176,.12)}
+.stat-ic.violet{background:rgba(124,58,237,.1)}
+.stat-ic.amber{background:rgba(217,119,6,.1)}
+.stat-val{font-size:22px;font-weight:800;color:var(--brand);line-height:1}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* FILTRES */
+.filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:.2s;background:#fff}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.4;font-size:14px}
+.cat-filter{display:flex;gap:6px;flex-wrap:wrap}
+.cat-btn{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--muted);font-family:inherit;transition:.15s}
+.cat-btn:hover{border-color:var(--accent);color:var(--accent)}
+.cat-btn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* GRILLE PRODUITS */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+
+/* CARTE PRODUIT */
+.prod-card{background:var(--card);border:1.5px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--shadow);transition:.2s;position:relative}
+.prod-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(30,58,95,.1);border-color:var(--accent)}
+.prod-card.selected{border-color:var(--ok);box-shadow:0 0 0 3px rgba(30,158,106,.12)}
+.prod-cat-bar{height:4px}
+.prod-body{padding:16px}
+.prod-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.prod-ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.prod-actions-top{display:flex;gap:5px}
+.ic-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px;display:grid;place-items:center;transition:.15s}
+.ic-btn:hover{border-color:var(--accent);background:rgba(46,134,193,.06)}
+.ic-btn.del:hover{border-color:var(--bad);background:#FDECEC}
+.prod-name{font-size:14px;font-weight:700;color:var(--brand);margin-bottom:4px;line-height:1.3}
+.prod-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px;min-height:36px}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line)}
+.prod-price{font-size:20px;font-weight:800;color:var(--brand);letter-spacing:-.5px}
+.prod-price small{font-size:11px;font-weight:400;color:var(--muted);margin-left:3px}
+.prod-unite{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;background:var(--bg);color:var(--muted)}
+.prod-select-btn{padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s}
+.prod-select-btn.add{background:linear-gradient(135deg,var(--emerald),#1A9E80);color:#fff}
+.prod-select-btn.add:hover{filter:brightness(1.07)}
+.prod-select-btn.added{background:#E6F7EF;color:var(--ok);border:1.5px solid var(--ok)}
+.prod-inactive{opacity:.5}
+.inactive-badge{position:absolute;top:14px;right:14px;background:var(--bg);border:1px solid var(--line);border-radius:6px;font-size:10px;font-weight:700;color:var(--muted);padding:2px 7px}
+
+/* MODAL ADMIN : ajouter/modifier produit */
+.overlay{position:fixed;inset:0;background:rgba(30,58,95,.45);z-index:200;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.show{display:grid;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:480px;margin:20px;box-shadow:0 24px 64px rgba(30,58,95,.2);overflow:hidden;animation:up .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes up{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+.modal-h{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.modal-h h3{font-size:16px;font-weight:800;color:var(--brand)}
+.modal-close{background:var(--bg);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px;display:grid;place-items:center}
+.modal-b{padding:20px 22px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,134,193,.1)}
+.field textarea{resize:vertical;min-height:70px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-note{font-size:11px;color:var(--amber);background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);border-radius:7px;padding:8px 11px;margin-bottom:14px}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px}
+.modal-foot button{flex:1;padding:11px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;border:none;transition:.2s}
+.btn-cancel{background:var(--line);color:var(--text)}
+.btn-save{background:linear-gradient(135deg,var(--accent),var(--brand));color:#fff}
+.btn-save:hover{filter:brightness(1.07)}
+
+/* PANIER SÉLECTION (mode commercial) */
+.panier-bar{position:fixed;bottom:0;left:var(--sb);right:0;background:var(--brand);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:90;transform:translateY(100%);transition:.3s ease;box-shadow:0 -4px 20px rgba(30,58,95,.2)}
+.panier-bar.show{transform:none}
+.panier-info{color:#fff}
+.panier-info b{font-size:15px;font-weight:800}
+.panier-info span{font-size:12px;color:rgba(255,255,255,.6);margin-left:10px}
+.panier-btns{display:flex;gap:8px}
+.p-btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:.15s}
+.p-btn.ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.p-btn.green{background:linear-gradient(135deg,var(--ok),#13784f);color:#fff}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;right:22px;z-index:999;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.15);transform:translateY(70px);opacity:0;transition:.3s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{transform:none;opacity:1}
+.toast.success{background:linear-gradient(135deg,var(--ok),#13784f)}
+.toast.error{background:linear-gradient(135deg,var(--bad),#991B1B)}
+.toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
+.toast.warn{background:linear-gradient(135deg,var(--amber),#B45309)}
+
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty-ic{font-size:40px;margin-bottom:12px}
+.empty b{display:block;font-size:15px;color:var(--text);margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo"><div class="logo-ic">SF</div><div class="logo-txt">Sales<span>Flow</span> Pro</div></div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">A</div>
+    <div><div class="sb-name" id="sbName">Utilisateur</div><div class="sb-role" id="sbRole"></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Principal</div>
+    <a class="nav-a" href="dashboard-admin.html" id="lkDash"><span class="nav-ic">📊</span>Dashboard</a>
+    <a class="nav-a" href="contacts.html"><span class="nav-ic">👥</span>Contacts</a>
+    <a class="nav-a" href="javascript:void(0)" onclick="document.getElementById('pipeline')?.scrollIntoView({behavior:'smooth'})"><span class="nav-ic">🔀</span>Pipeline</a>
+    <div class="sb-sec">Commercial</div>
+    <a class="nav-a" href="nouveau-devis.html"><span class="nav-ic">📄</span>Devis</a>
+    <a class="nav-a" href="facture-preview.html"><span class="nav-ic">🧾</span>Factures</a>
+    <a class="nav-a" href="analyse-bon-commande.html"><span class="nav-ic">📋</span>Bons de commande</a>
+    <a class="nav-a active" href="catalogue.html"><span class="nav-ic">📦</span>Catalogue</a>
+    <div class="sb-sec" id="adminSection">Admin</div>
+    <a class="nav-a" href="admin-comptes.html" id="lkComptes"><span class="nav-ic">🔐</span>Comptes</a>
+  </nav>
+  <div class="sb-foot">
+    <button class="logout" onclick="window.location.href='login.html'">🚪 Se déconnecter</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-l">
+      <h1>📦 Catalogue de Services</h1>
+      <p id="roleDesc">Chargement…</p>
+    </div>
+    <div class="tb-r">
+      <span class="role-badge" id="roleBadge"></span>
+      <button class="tbtn ghost" onclick="window.location.href='dashboard-admin.html'" id="btnBack">← Dashboard</button>
+      <button class="tbtn primary" id="btnAdd" onclick="openModal()" style="display:none">＋ Ajouter un service</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-ic blue">📦</div><div><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Services au catalogue</div></div></div>
+      <div class="stat-card"><div class="stat-ic green">✅</div><div><div class="stat-val" id="statActif">0</div><div class="stat-lbl">Services actifs</div></div></div>
+      <div class="stat-card"><div class="stat-ic violet">🏷️</div><div><div class="stat-val" id="statCats">0</div><div class="stat-lbl">Catégories</div></div></div>
+      <div class="stat-card"><div class="stat-ic amber">💰</div><div><div class="stat-val" id="statPrix">0 DT</div><div class="stat-lbl">Prix moyen</div></div></div>
+    </div>
+
+    <!-- FILTRES -->
+    <div class="filters">
+      <div class="search-wrap">
+        <span class="search-ic">🔍</span>
+        <input type="text" id="searchInput" placeholder="Rechercher un service…" oninput="renderProducts()">
+      </div>
+      <div class="cat-filter" id="catFilter"></div>
+    </div>
+
+    <!-- GRILLE -->
+    <div class="products-grid" id="productsGrid"></div>
+
+  </div>
+</div>
+
+<!-- PANIER COMMERCIAL -->
+<div class="panier-bar" id="panierBar">
+  <div class="panier-info">
+    <b id="panierCount">0 service(s) sélectionné(s)</b>
+    <span id="panierTotal">0,000 DT</span>
+  </div>
+  <div class="panier-btns">
+    <button class="p-btn ghost" onclick="clearPanier()">✕ Vider</button>
+    <button class="p-btn ghost" onclick="usePanier('facture')">🧾 Créer Facture</button>
+    <button class="p-btn green" onclick="usePanier('devis')">📄 Créer Devis</button>
+  </div>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-h">
+      <h3 id="modalTitle">Ajouter un service</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-b">
+      <div class="admin-note">🔒 Seul l'Admin peut ajouter, modifier ou supprimer des services et leurs prix.</div>
+      <input type="hidden" id="editId">
+      <div class="field">
+        <label>Nom du service <span style="color:var(--bad)">*</span></label>
+        <input id="f_nom" placeholder="ex : Audit cybersécurité">
+      </div>
+      <div class="field">
+        <label>Catégorie</label>
+        <select id="f_cat">
+          <option value="">— Choisir —</option>
+          <option>Développement</option>
+          <option>Cybersécurité</option>
+          <option>Cloud & Infrastructure</option>
+          <option>Formation</option>
+          <option>Infogérance</option>
+          <option>Conseil & Audit</option>
+          <option>Maintenance</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea id="f_desc" placeholder="Description courte du service…"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field" style="margin:0">
+          <label>Prix unitaire (DT) <span style="color:var(--bad)">*</span></label>
+          <input type="number" id="f_prix" placeholder="ex : 3500" min="0">
+        </div>
+        <div class="field" style="margin:0">
+          <label>Unité</label>
+          <select id="f_unite">
+            <option value="forfait">Forfait</option>
+            <option value="jour">Jour</option>
+            <option value="mois">Mois</option>
+            <option value="heure">Heure</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label>Statut</label>
+        <select id="f_statut">
+          <option value="actif">Actif</option>
+          <option value="inactif">Inactif</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveProduct()">✅ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════
+   RÔLE (simulated — remplacer par Supabase Auth)
+══════════════════════════════════ */
+// Lire le rôle depuis localStorage (mis par login.html)
+const ROLE = localStorage.getItem('sf_role') || 'admin'; // 'admin' ou 'commercial'
+const USER_NAME = localStorage.getItem('sf_user') || 'Sales Manager';
+
+// Configurer l'UI selon le rôle
+function setupRole() {
+  const isAdmin = ROLE === 'admin';
+  document.getElementById('sbAv').textContent    = USER_NAME.charAt(0).toUpperCase();
+  document.getElementById('sbAv').className      = 'sb-av ' + ROLE;
+  document.getElementById('sbName').textContent  = USER_NAME;
+  document.getElementById('sbRole').textContent  = isAdmin ? '🛡️ Admin' : '💼 Commercial';
+  document.getElementById('sbRole').className    = 'sb-role ' + ROLE;
+  document.getElementById('roleBadge').textContent = isAdmin ? '🛡️ Admin' : '💼 Commercial';
+  document.getElementById('roleBadge').className = 'role-badge ' + ROLE;
+  document.getElementById('roleDesc').textContent = isAdmin
+    ? 'Gestion complète — prix, ajout, suppression'
+    : 'Consultation & sélection pour vos devis/factures';
+  document.getElementById('btnAdd').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('btnBack').href = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+  document.getElementById('lkDash').href = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+  if (!isAdmin) {
+    document.getElementById('adminSection').style.display = 'none';
+    document.getElementById('lkComptes').style.display = 'none';
+  }
+}
+
+/* ══════════════════════════════════
+   DONNÉES (localStorage)
+══════════════════════════════════ */
+const CATS = {
+  'Développement':       { ic:'💻', color:'#2E86C1', bg:'rgba(46,134,193,.12)' },
+  'Cybersécurité':       { ic:'🔒', color:'#DC2626', bg:'rgba(220,38,38,.1)' },
+  'Cloud & Infrastructure':{ ic:'☁️', color:'#7C3AED', bg:'rgba(124,58,237,.1)' },
+  'Formation':           { ic:'🎓', color:'#D97706', bg:'rgba(217,119,6,.1)' },
+  'Infogérance':         { ic:'🖥️', color:'#1E9E6A', bg:'rgba(30,158,106,.1)' },
+  'Conseil & Audit':     { ic:'📊', color:'#48C9B0', bg:'rgba(72,201,176,.12)' },
+  'Maintenance':         { ic:'🔧', color:'#6B7785', bg:'rgba(107,119,133,.1)' },
+  'Autre':               { ic:'📦', color:'#1E3A5F', bg:'rgba(30,58,95,.08)' },
+};
+
+function loadProducts() {
+  const saved = localStorage.getItem('sf_catalogue');
+  if (saved) return JSON.parse(saved);
+  // Données par défaut
+  const defaults = [
+    { id:1, nom:'Audit cybersécurité',          cat:'Cybersécurité',        desc:'Audit complet de sécurité du système d\'information',        prix:3500,  unite:'forfait', statut:'actif' },
+    { id:2, nom:'Développement portail web',     cat:'Développement',        desc:'Conception et développement d\'un portail web sur mesure',    prix:4900,  unite:'forfait', statut:'actif' },
+    { id:3, nom:'Développement ERP sur mesure',  cat:'Développement',        desc:'ERP complet adapté aux besoins métier',                       prix:18000, unite:'forfait', statut:'actif' },
+    { id:4, nom:'Formation DevOps',              cat:'Formation',            desc:'Formation DevOps : CI/CD, Docker, Kubernetes',                prix:600,   unite:'jour',    statut:'actif' },
+    { id:5, nom:'Migration cloud AWS',           cat:'Cloud & Infrastructure',desc:'Migration de l\'infrastructure vers AWS',                   prix:8200,  unite:'forfait', statut:'actif' },
+    { id:6, nom:'Infogérance mensuelle',         cat:'Infogérance',          desc:'Gestion et maintenance de l\'infrastructure IT',              prix:1200,  unite:'mois',    statut:'actif' },
+    { id:7, nom:'Conseil & Audit SI',            cat:'Conseil & Audit',      desc:'Conseil stratégique et audit du système d\'information',      prix:950,   unite:'jour',    statut:'actif' },
+    { id:8, nom:'Développement mobile',          cat:'Développement',        desc:'Application mobile iOS et Android',                           prix:6500,  unite:'forfait', statut:'actif' },
+    { id:9, nom:'Maintenance corrective',        cat:'Maintenance',          desc:'Maintenance corrective et évolutive des applications',        prix:800,   unite:'mois',    statut:'actif' },
+    { id:10,nom:'Formation Cybersécurité',       cat:'Formation',            desc:'Sensibilisation et formation à la sécurité informatique',     prix:450,   unite:'jour',    statut:'actif' },
+  ];
+  localStorage.setItem('sf_catalogue', JSON.stringify(defaults));
+  return defaults;
+}
+function saveProducts(p) { localStorage.setItem('sf_catalogue', JSON.stringify(p)); }
+let products = loadProducts();
+
+/* ══════════════════════════════════
+   FILTRES & RENDU
+══════════════════════════════════ */
+let activeCat = 'Tous';
+let panier = {}; // {id: {product, qty}}
+
+function renderCatFilter() {
+  const cats = ['Tous', ...new Set(products.map(p => p.cat).filter(Boolean))];
+  const wrap = document.getElementById('catFilter');
+  wrap.innerHTML = cats.map(c =>
+    `<button class="cat-btn ${c===activeCat?'on':''}" onclick="setCat('${c}')">${CATS[c]?.ic||'📦'} ${c}</button>`
+  ).join('');
+}
+
+function setCat(cat) { activeCat = cat; renderCatFilter(); renderProducts(); }
+
+function renderProducts() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = products.filter(p => {
+    const matchCat = activeCat === 'Tous' || p.cat === activeCat;
+    const matchQ   = !q || p.nom.toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  const grid = document.getElementById('productsGrid');
+  const isAdmin = ROLE === 'admin';
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ic">🔍</div><b>Aucun service trouvé</b>Essaie une autre recherche</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const cfg = CATS[p.cat] || CATS['Autre'];
+    const inPanier = !!panier[p.id];
+    const inactive = p.statut !== 'actif';
+    return `
+    <div class="prod-card ${inactive?'prod-inactive':''}" id="pc-${p.id}">
+      ${inactive ? '<div class="inactive-badge">Inactif</div>' : ''}
+      <div class="prod-cat-bar" style="background:${cfg.color}"></div>
+      <div class="prod-body">
+        <div class="prod-head">
+          <div class="prod-ic" style="background:${cfg.bg}">${cfg.ic}</div>
+          ${isAdmin ? `<div class="prod-actions-top">
+            <button class="ic-btn" title="Modifier" onclick="editProduct(${p.id})">✏️</button>
+            <button class="ic-btn del" title="Supprimer" onclick="deleteProduct(${p.id})">🗑️</button>
+            <button class="ic-btn" title="${p.statut==='actif'?'Désactiver':'Activer'}" onclick="toggleStatus(${p.id})">${p.statut==='actif'?'⏸️':'▶️'}</button>
+          </div>` : ''}
+        </div>
+        <div style="font-size:10px;font-weight:700;color:${cfg.color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">${p.cat||'—'}</div>
+        <div class="prod-name">${p.nom}</div>
+        <div class="prod-desc">${p.desc||''}</div>
+        <div class="prod-footer">
+          <div>
+            <div class="prod-price">${fmt(p.prix)} <small>DT</small></div>
+            <div class="prod-unite">/ ${p.unite}</div>
+          </div>
+          ${!isAdmin ? `<button class="prod-select-btn ${inPanier?'added':'add'}" onclick="togglePanier(${p.id})">
+            ${inPanier ? '✓ Ajouté' : '+ Sélectionner'}
+          </button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateStats();
+}
+
+/* ══════════════════════════════════
+   STATS
+══════════════════════════════════ */
+function updateStats() {
+  const actifs = products.filter(p => p.statut === 'actif');
+  const cats   = new Set(products.map(p => p.cat).filter(Boolean));
+  const moy    = actifs.length ? actifs.reduce((s,p) => s+p.prix, 0) / actifs.length : 0;
+  document.getElementById('statTotal').textContent = products.length;
+  document.getElementById('statActif').textContent = actifs.length;
+  document.getElementById('statCats').textContent  = cats.size;
+  document.getElementById('statPrix').textContent  = fmt(moy) + ' DT';
+}
+
+/* ══════════════════════════════════
+   ADMIN : CRUD
+══════════════════════════════════ */
+function openModal(id = null) {
+  document.getElementById('editId').value   = id || '';
+  document.getElementById('modalTitle').textContent = id ? 'Modifier le service' : 'Ajouter un service';
+  if (id) {
+    const p = products.find(x => x.id === id);
+    document.getElementById('f_nom').value    = p.nom;
+    document.getElementById('f_cat').value    = p.cat;
+    document.getElementById('f_desc').value   = p.desc;
+    document.getElementById('f_prix').value   = p.prix;
+    document.getElementById('f_unite').value  = p.unite;
+    document.getElementById('f_statut').value = p.statut;
+  } else {
+    ['f_nom','f_desc','f_prix'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f_cat').value    = '';
+    document.getElementById('f_unite').value  = 'forfait';
+    document.getElementById('f_statut').value = 'actif';
+  }
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('show'); }
+
+function saveProduct() {
+  const nom  = document.getElementById('f_nom').value.trim();
+  const prix = parseFloat(document.getElementById('f_prix').value);
+  if (!nom)        { showToast('⚠️ Le nom est obligatoire','error'); return; }
+  if (!prix || prix <= 0) { showToast('⚠️ Le prix doit être supérieur à 0','error'); return; }
+
+  const editId = document.getElementById('editId').value;
+  const obj = {
+    nom, prix,
+    cat:    document.getElementById('f_cat').value,
+    desc:   document.getElementById('f_desc').value,
+    unite:  document.getElementById('f_unite').value,
+    statut: document.getElementById('f_statut').value,
+  };
+
+  if (editId) {
+    const idx = products.findIndex(p => p.id == editId);
+    products[idx] = { ...products[idx], ...obj };
+    showToast('✅ Service mis à jour', 'success');
+  } else {
+    obj.id = Date.now();
+    products.push(obj);
+    showToast('✅ Service ajouté au catalogue', 'success');
+  }
+  saveProducts(products);
+  closeModal();
+  renderCatFilter();
+  renderProducts();
+}
+
+function editProduct(id) { if (ROLE !== 'admin') return; openModal(id); }
+
+function deleteProduct(id) {
+  if (ROLE !== 'admin') return;
+  const p = products.find(x => x.id === id);
+  if (!confirm(`Supprimer "${p.nom}" du catalogue ?`)) return;
+  products = products.filter(x => x.id !== id);
+  saveProducts(products);
+  renderCatFilter();
+  renderProducts();
+  showToast('🗑️ Service supprimé', 'warn');
+}
+
+function toggleStatus(id) {
+  if (ROLE !== 'admin') return;
+  const p = products.find(x => x.id === id);
+  p.statut = p.statut === 'actif' ? 'inactif' : 'actif';
+  saveProducts(products);
+  renderProducts();
+  showToast(p.statut === 'actif' ? '✅ Service activé' : '⏸️ Service désactivé', 'info');
+}
+
+/* ══════════════════════════════════
+   COMMERCIAL : PANIER SÉLECTION
+══════════════════════════════════ */
+function togglePanier(id) {
+  if (panier[id]) {
+    delete panier[id];
+  } else {
+    const p = products.find(x => x.id === id);
+    panier[id] = { product: p, qty: 1 };
+  }
+  renderProducts();
+  updatePanierBar();
+}
+
+function updatePanierBar() {
+  const count = Object.keys(panier).length;
+  const total = Object.values(panier).reduce((s,i) => s + i.product.prix * i.qty, 0);
+  document.getElementById('panierCount').textContent = count + ' service(s) sélectionné(s)';
+  document.getElementById('panierTotal').textContent = fmt(total) + ' DT';
+  document.getElementById('panierBar').classList.toggle('show', count > 0);
+}
+
+function clearPanier() {
+  panier = {};
+  renderProducts();
+  updatePanierBar();
+}
+
+function usePanier(dest) {
+  // Sauvegarder la sélection dans localStorage pour le devis/facture
+  const selection = Object.values(panier).map(i => ({
+    service: i.product.nom,
+    qty: i.qty,
+    price: i.product.prix,
+    unite: i.product.unite
+  }));
+  localStorage.setItem('sf_selection_catalogue', JSON.stringify(selection));
+  showToast('📄 Redirection vers ' + (dest === 'devis' ? 'le devis' : 'la facture') + '…', 'success');
+  setTimeout(() => {
+    window.location.href = dest === 'devis' ? 'nouveau-devis.html' : 'facture-preview.html';
+  }, 800);
+}
+
+/* ══════════════════════════════════
+   FORMAT & TOAST
+══════════════════════════════════ */
+function fmt(n) {
+  return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:0,maximumFractionDigits:0}).format(parseFloat(n)||0);
+}
+
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type;
+  void t.offsetWidth; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+setupRole();
+renderCatFilter();
+renderProducts();
+</script>
+</body>
+</html>
