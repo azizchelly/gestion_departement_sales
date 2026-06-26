@@ -400,5 +400,38 @@ function decide(ok){
 
 renderLines();
 </script>
+
+<script>
+(function(){
+  var role = localStorage.getItem('sf_role') || 'admin';
+  var uname = localStorage.getItem('sf_user') || 'Utilisateur';
+  var isAdmin = role === 'admin';
+  var dash = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+
+  var av = document.getElementById('sbAv');
+  if(av){
+    av.textContent = uname.charAt(0).toUpperCase();
+    av.style.background = isAdmin
+      ? 'linear-gradient(135deg,#2E86C1,#1E3A5F)'
+      : 'linear-gradient(135deg,#48C9B0,#1A9E80)';
+  }
+  var sn = document.getElementById('sbName'); if(sn) sn.textContent = uname;
+  var sr = document.getElementById('sbRole'); if(sr) sr.textContent = isAdmin ? 'Admin' : 'Commercial';
+
+  var nav = document.getElementById('sideNav');
+  if(!nav) return;
+
+  nav.innerHTML =
+    '<div class="sb-sec">Principal</div>' +
+    '<a class="nav-a" href="' + dash + '"><span class="nav-ic">&#128202;</span>Dashboard</a>' +
+    '<a class="nav-a" href="contacts.html"><span class="nav-ic">&#128101;</span>' + (isAdmin ? 'Contacts' : 'Mes Clients') + '</a>' +
+    '<div class="sb-sec">Commercial</div>' +
+    '<a class="nav-a " href="nouveau-devis.html"><span class="nav-ic">&#128196;</span>' + (isAdmin ? 'Devis' : 'Mes Devis') + '</a>' +
+    '<a class="nav-a " href="facture-preview.html"><span class="nav-ic">&#129534;</span>' + (isAdmin ? 'Factures' : 'Mes Factures') + '</a>' +
+    '<a class="nav-a active" href="analyse-bon-commande.html"><span class="nav-ic">&#128203;</span>Bons de commande</a>' +
+    '<a class="nav-a " href="catalogue.html"><span class="nav-ic">&#128230;</span>Catalogue</a>' +
+    (isAdmin ? '<div class="sb-sec">Admin</div><a class="nav-a " href="admin-comptes.html"><span class="nav-ic">&#128274;</span>Comptes</a>' : '');
+})();
+</script>
 </body>
 </html>
