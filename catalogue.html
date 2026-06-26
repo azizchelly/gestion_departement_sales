@@ -338,28 +338,31 @@ const CATS = {
 };
 
 function loadProducts() {
-  const saved = localStorage.getItem('sf_catalogue');
-  if (saved) {
-    try {
+  // Services par défaut TOUJOURS présents (visibles par tous les rôles)
+  const defaults = [
+    { id:1,  nom:"Audit cybersécurité",           cat:"Cybersécurité",          desc:"Audit complet de sécurité du système d information",       prix:3500,  unite:"forfait", statut:"actif" },
+    { id:2,  nom:"Développement portail web",      cat:"Développement",          desc:"Conception et développement portail web sur mesure",   prix:4900,  unite:"forfait", statut:"actif" },
+    { id:3,  nom:"Développement ERP sur mesure",   cat:"Développement",          desc:"ERP complet adapté aux besoins métier",                      prix:18000, unite:"forfait", statut:"actif" },
+    { id:4,  nom:"Formation DevOps",               cat:"Formation",              desc:"Formation DevOps : CI/CD, Docker, Kubernetes",               prix:600,   unite:"jour",    statut:"actif" },
+    { id:5,  nom:"Migration cloud AWS",            cat:"Cloud & Infrastructure", desc:"Migration infrastructure vers AWS",                    prix:8200,  unite:"forfait", statut:"actif" },
+    { id:6,  nom:"Infogérance mensuelle",          cat:"Infogérance",            desc:"Gestion et maintenance infrastructure IT",             prix:1200,  unite:"mois",    statut:"actif" },
+    { id:7,  nom:"Conseil & Audit SI",             cat:"Conseil & Audit",        desc:"Conseil stratégique et audit du système information",     prix:950,   unite:"jour",    statut:"actif" },
+    { id:8,  nom:"Développement mobile",           cat:"Développement",          desc:"Application mobile iOS et Android",                          prix:6500,  unite:"forfait", statut:"actif" },
+    { id:9,  nom:"Maintenance corrective",         cat:"Maintenance",            desc:"Maintenance corrective et évolutive des applications",       prix:800,   unite:"mois",    statut:"actif" },
+    { id:10, nom:"Formation Cybersécurité",        cat:"Formation",              desc:"Sensibilisation et formation à la sécurité informatique",    prix:450,   unite:"jour",    statut:"actif" },
+  ];
+
+  // Recuperer les modifications Admin (ajouts/suppressions/prix)
+  try {
+    const saved = localStorage.getItem('sf_catalogue');
+    if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    } catch(e) {}
-  }
-  // Données par défaut — chargées pour TOUS les rôles
-  const defaults = [
-    { id:1, nom:'Audit cybersécurité',          cat:'Cybersécurité',        desc:'Audit complet de sécurité du système d\'information',        prix:3500,  unite:'forfait', statut:'actif' },
-    { id:2, nom:'Développement portail web',     cat:'Développement',        desc:'Conception et développement d\'un portail web sur mesure',    prix:4900,  unite:'forfait', statut:'actif' },
-    { id:3, nom:'Développement ERP sur mesure',  cat:'Développement',        desc:'ERP complet adapté aux besoins métier',                       prix:18000, unite:'forfait', statut:'actif' },
-    { id:4, nom:'Formation DevOps',              cat:'Formation',            desc:'Formation DevOps : CI/CD, Docker, Kubernetes',                prix:600,   unite:'jour',    statut:'actif' },
-    { id:5, nom:'Migration cloud AWS',           cat:'Cloud & Infrastructure',desc:'Migration de l\'infrastructure vers AWS',                   prix:8200,  unite:'forfait', statut:'actif' },
-    { id:6, nom:'Infogérance mensuelle',         cat:'Infogérance',          desc:'Gestion et maintenance de l\'infrastructure IT',              prix:1200,  unite:'mois',    statut:'actif' },
-    { id:7, nom:'Conseil & Audit SI',            cat:'Conseil & Audit',      desc:'Conseil stratégique et audit du système d\'information',      prix:950,   unite:'jour',    statut:'actif' },
-    { id:8, nom:'Développement mobile',          cat:'Développement',        desc:'Application mobile iOS et Android',                           prix:6500,  unite:'forfait', statut:'actif' },
-    { id:9, nom:'Maintenance corrective',        cat:'Maintenance',          desc:'Maintenance corrective et évolutive des applications',        prix:800,   unite:'mois',    statut:'actif' },
-    { id:10,nom:'Formation Cybersécurité',       cat:'Formation',            desc:'Sensibilisation et formation à la sécurité informatique',     prix:450,   unite:'jour',    statut:'actif' },
-  ];
+    }
+  } catch(e) {}
+
+  // Sauvegarder les défauts et les retourner
   localStorage.setItem('sf_catalogue', JSON.stringify(defaults));
-  console.log('Catalogue initialisé avec', defaults.length, 'services');
   return defaults;
 }
 function saveProducts(p) { localStorage.setItem('sf_catalogue', JSON.stringify(p)); }
@@ -583,9 +586,6 @@ function showToast(msg, type='info') {
 /* ══════════════════════════════════
    INIT
 ══════════════════════════════════ */
-// Forcer rechargement des produits
-products = loadProducts();
-console.log('Produits chargés:', products.length);
 setupRole();
 renderCatFilter();
 renderProducts();
