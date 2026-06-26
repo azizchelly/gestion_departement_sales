@@ -472,7 +472,8 @@ label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-trans
     <div class="preview-head">
       <h3>📄 Aperçu du devis</h3>
       <div style="display:flex;gap:8px">
-        <button onclick="window.print()" style="background:linear-gradient(135deg,var(--ok),#13784f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🖨️ Imprimer / PDF</button>
+        <button onclick="imprimerDevis()" style="background:linear-gradient(135deg,var(--ok),#13784f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">🖨️ Imprimer / PDF</button>
+        <button onclick="exporterEmail()" style="background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">📧 Envoyer par email</button>
         <button onclick="closePreview()">✕ Fermer</button>
       </div>
     </div>
