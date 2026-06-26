@@ -203,17 +203,17 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
   </div>
   <nav class="sb-nav">
     <div class="sb-sec">Principal</div>
-    <a class="nav-a active" href="dashboard-admin.html"><span class="nav-ic">📊</span>Dashboard</a>
-    <a class="nav-a" href="contacts.html"><span class="nav-ic">👥</span>Contacts</a>
+    <a class="nav-a active" href="javascript:void(0)" onclick="goTo('dashboard-admin')"><span class="nav-ic">📊</span>Dashboard</a>
+    <a class="nav-a" href="javascript:void(0)" onclick="goTo('contacts')"><span class="nav-ic">👥</span>Contacts</a>
     <a class="nav-a" href="javascript:void(0)" onclick="document.getElementById('pipeline')?.scrollIntoView({behavior:'smooth'})"><span class="nav-ic">🔀</span>Pipeline</a>
     <a class="nav-a" href="javascript:void(0)" onclick="document.getElementById('projets')?.scrollIntoView({behavior:'smooth'})"><span class="nav-ic">📁</span>Projets<span class="nav-badge g">4</span></a>
     <div class="sb-sec">Commercial</div>
-    <a class="nav-a" href="nouveau-devis.html"><span class="nav-ic">📄</span>Devis<span class="nav-badge">3</span></a>
-    <a class="nav-a" href="facture-preview.html"><span class="nav-ic">🧾</span>Factures</a>
-    <a class="nav-a" href="analyse-bon-commande.html"><span class="nav-ic">📋</span>Bons de commande</a>
+    <a class="nav-a" href="javascript:void(0)" onclick="goTo('nouveau-devis')"><span class="nav-ic">📄</span>Devis<span class="nav-badge">3</span></a>
+    <a class="nav-a" href="javascript:void(0)" onclick="goTo('facture-preview')"><span class="nav-ic">🧾</span>Factures</a>
+    <a class="nav-a" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')"><span class="nav-ic">📋</span>Bons de commande</a>
     <div class="sb-sec">Admin</div>
-    <a class="nav-a" href="admin-comptes.html"><span class="nav-ic">🔐</span>Comptes</a>
-    <a class="nav-a" href="contacts.html"><span class="nav-ic">📦</span>Catalogue</a>
+    <a class="nav-a" href="javascript:void(0)" onclick="goTo('admin-comptes')"><span class="nav-ic">🔐</span>Comptes</a>
+    <a class="nav-a" href="javascript:void(0)" onclick="goTo('contacts')"><span class="nav-ic">📦</span>Catalogue</a>
   </nav>
   <div class="sb-foot">
     <button class="logout" onclick="window.location.href='login.html'">🚪 Se déconnecter</button>
@@ -290,27 +290,27 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
  
     <!-- ACTIONS RAPIDES -->
     <div class="qa-grid">
-      <a class="qa-btn" href="nouveau-devis.html">
+      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')">
         <div class="qa-ic blue">📄</div>
         <div class="qa-label">Nouveau devis</div>
         <div class="qa-sub">Créer depuis catalogue</div>
       </a>
-      <a class="qa-btn" href="facture-preview.html">
+      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('facture-preview')">
         <div class="qa-ic green">🧾</div>
         <div class="qa-label">Générer facture</div>
         <div class="qa-sub">Depuis devis accepté</div>
       </a>
-      <a class="qa-btn" href="contacts.html">
+      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('contacts')">
         <div class="qa-ic violet">🏢</div>
         <div class="qa-label">Ajouter contact</div>
         <div class="qa-sub">Client / Fournisseur</div>
       </a>
-      <a class="qa-btn" href="analyse-bon-commande.html">
+      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')">
         <div class="qa-ic amber">📋</div>
         <div class="qa-label">Analyser BC</div>
         <div class="qa-sub">OCR + vérification</div>
       </a>
-      <a class="qa-btn" href="admin-comptes.html">
+      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('admin-comptes')">
         <div class="qa-ic red">🔐</div>
         <div class="qa-label">Gérer comptes</div>
         <div class="qa-sub">Commerciaux & accès</div>
@@ -355,7 +355,7 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
         <div class="card">
           <div class="card-h">
             <div class="card-h-l"><div class="cdot"></div><h2>Devis en attente</h2></div>
-            <a class="card-link" href="nouveau-devis.html">+ Nouveau →</a>
+            <a class="card-link" href="javascript:void(0)" onclick="goTo('nouveau-devis')">+ Nouveau →</a>
           </div>
           <div style="overflow-x:auto">
             <table class="dv-tbl">
@@ -369,9 +369,9 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
                   <td style="font-weight:700">6 200,000</td>
                   <td><span class="dv-badge late">⏱ +9 jours</span></td>
                   <td><div class="dv-acts">
-                    <a class="ic-btn grn" href="facture-preview.html" title="Générer facture">🧾</a>
-                    <a class="ic-btn" href="nouveau-devis.html" title="Modifier">✏️</a>
-                    <a class="ic-btn" href="analyse-bon-commande.html" title="Bon de commande">📋</a>
+                    <a class="ic-btn grn" href="javascript:void(0)" onclick="goTo('facture-preview')" title="Générer facture">🧾</a>
+                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')" title="Modifier">✏️</a>
+                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')" title="Bon de commande">📋</a>
                   </div></td>
                 </tr>
                 <tr>
@@ -380,9 +380,9 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
                   <td style="font-weight:700">18 000,000</td>
                   <td><span class="dv-badge sent">📤 Envoyé</span></td>
                   <td><div class="dv-acts">
-                    <a class="ic-btn grn" href="facture-preview.html" title="Générer facture">🧾</a>
-                    <a class="ic-btn" href="nouveau-devis.html" title="Modifier">✏️</a>
-                    <a class="ic-btn" href="analyse-bon-commande.html" title="Bon de commande">📋</a>
+                    <a class="ic-btn grn" href="javascript:void(0)" onclick="goTo('facture-preview')" title="Générer facture">🧾</a>
+                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')" title="Modifier">✏️</a>
+                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')" title="Bon de commande">📋</a>
                   </div></td>
                 </tr>
                 <tr>
@@ -391,9 +391,9 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
                   <td style="font-weight:700">24 000,000</td>
                   <td><span class="dv-badge ok">✅ Accepté</span></td>
                   <td><div class="dv-acts">
-                    <a class="ic-btn grn" href="facture-preview.html" title="Générer facture">🧾</a>
-                    <a class="ic-btn" href="nouveau-devis.html" title="Modifier">✏️</a>
-                    <a class="ic-btn" href="analyse-bon-commande.html" title="Analyser BC">📋</a>
+                    <a class="ic-btn grn" href="javascript:void(0)" onclick="goTo('facture-preview')" title="Générer facture">🧾</a>
+                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')" title="Modifier">✏️</a>
+                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')" title="Analyser BC">📋</a>
                   </div></td>
                 </tr>
               </tbody>
@@ -508,6 +508,12 @@ function toast(msg,type='info'){
   t.textContent=msg; t.className='toast '+type;
   void t.offsetWidth; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+ 
+<script>
+function goTo(page) {
+  window.location.href = page + '.html';
 }
 </script>
 </body>
