@@ -149,6 +149,16 @@ label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-trans
 .modal-foot .btn-close{background:var(--line);color:var(--text)}
 .modal-foot .btn-del{background:linear-gradient(135deg,var(--bad),#991B1B);color:#fff}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+<script>
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+const sb = supabase.createClient(SB_URL, SB_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true },
+  realtime: { params: { eventsPerSecond: 10 } },
+  global: { fetch: fetch.bind(globalThis) }
+});
+</script>
 </head>
 <body>
 
@@ -291,9 +301,81 @@ const TYPES = {
 };
 
 /* ═══ STORAGE ═══ */
-function load(type){ return JSON.parse(localStorage.getItem('sf_'+type)||'[]'); }
-function save(type,data){ localStorage.setItem('sf_'+type,JSON.stringify(data)); }
-function nextId(type){ const d=load(type); return d.length ? Math.max(...d.map(x=>x.id))+1 : 1; }
+async function load(type) {
+  // Mapping type -> table Supabase
+  const tableMap = {
+    "client":      "clients",
+    "commercial":  "clients",
+    "freelancer":  "freelancers",
+    "fournisseur": "fournisseurs"
+  };
+  const table = tableMap[type];
+  if (!table) return [];
+
+  try {
+    const { data, error } = await sb.from(table).select("*").order("id", {ascending:false});
+    if (error) {
+      console.error("Erreur Supabase [" + type + "]:", error.message);
+      // Fallback localStorage
+      return JSON.parse(localStorage.getItem("sf_"+type)||"[]");
+    }
+    return (data||[]).map(r => ({...r, type}));
+  } catch(e) {
+    console.error("Erreur chargement " + type, e.message);
+    return JSON.parse(localStorage.getItem("sf_"+type)||"[]");
+  }
+}
+
+async function save(type, item, id) {
+  const tableMap = {
+    "client":      "clients",
+    "freelancer":  "freelancers",
+    "fournisseur": "fournisseurs",
+    "commercial":  "clients"
+  };
+  const table = tableMap[type];
+  if (!table) return false;
+
+  // Nettoyer l objet - garder seulement les colonnes qui existent
+  const cleanItem = {};
+  const allowed = {
+    "clients":      ["nom","contact","email","telephone","adresse","secteur","mf","statut","notes"],
+    "freelancers":  ["prenom","nom","email","telephone","expertise","tjm","disponibilite","competences"],
+    "fournisseurs": ["nom","contact","email","telephone","type_f","mf","statut","notes"]
+  };
+  const cols = allowed[table] || [];
+  cols.forEach(col => { if (item[col] !== undefined) cleanItem[col] = item[col]; });
+
+  try {
+    if (id) {
+      const { error } = await sb.from(table).update(cleanItem).eq("id", id);
+      if (error) { console.error("Update error:", error.message); return false; }
+    } else {
+      const { error } = await sb.from(table).insert(cleanItem);
+      if (error) { console.error("Insert error:", error.message); return false; }
+    }
+    return true;
+  } catch(e) {
+    console.error("Erreur sauvegarde:", e.message);
+    return false;
+  }
+}
+
+async function deleteFromDB(type, id) {
+  const tableMap = {
+    "client":"clients","commercial":"clients",
+    "freelancer":"freelancers","fournisseur":"fournisseurs"
+  };
+  const table = tableMap[type];
+  if (!table) return false;
+  try {
+    const { error } = await sb.from(table).delete().eq("id", id);
+    if (error) { console.error("Delete error:", error.message); return false; }
+    return true;
+  } catch(e) { return false; }
+}
+
+function nextId(type) { return Date.now(); }
 
 /* ═══ SWITCH TYPE ═══ */
 function switchType(type) {
@@ -532,19 +614,16 @@ function renderForm() {
 }
 
 /* ═══ SUBMIT ═══ */
-function submitForm() {
+async function submitForm() {
   const data = collectForm();
   if (!data) return;
-  const list = load(currentType);
-  data.id = nextId(currentType);
-  data.type = currentType;
-  data.createdAt = new Date().toLocaleDateString('fr-FR');
-  list.push(data);
-  save(currentType, list);
+  data.createdAt = new Date().toLocaleDateString("fr-FR");
+  const ok = await save(currentType, data, null);
+  if (!ok) { showToast("❌ Erreur lors de l ajout", "error"); return; }
   renderForm();
-  renderList();
+  await refreshList();
   updateCounts();
-  showToast('✅ ' + TYPES[currentType].label + ' ajouté avec succès !', 'success');
+  showToast("✅ " + TYPES[currentType].label + " ajouté avec succès !", "success");
 }
 
 function collectForm() {
@@ -570,9 +649,18 @@ function collectForm() {
 }
 
 /* ═══ RENDU LISTE ═══ */
+async function refreshList() {
+  const list = await load(currentType);
+  renderListData(list);
+  updateCounts();
+}
+
 function renderList() {
-  const list = load(currentType);
-  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  refreshList();
+}
+
+function renderListData(list) {
+  const q = (document.getElementById("searchInput").value||'').toLowerCase();
   const cfg = TYPES[currentType];
 
   const filtered = list.filter(item => {
@@ -690,7 +778,7 @@ function showToast(msg, type='info') {
 
 /* ═══ INIT ═══ */
 renderForm();
-renderList();
+refreshList();
 updateCounts();
 </script>
 
