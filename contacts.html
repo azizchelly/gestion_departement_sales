@@ -693,5 +693,38 @@ renderForm();
 renderList();
 updateCounts();
 </script>
+
+<script>
+(function() {
+  const role = localStorage.getItem('sf_role') || 'admin';
+  const name = localStorage.getItem('sf_user') || 'Utilisateur';
+  const isAdmin = role === 'admin';
+
+  // User info
+  const av = document.getElementById('sbAv');
+  if(av) { av.textContent = name.charAt(0).toUpperCase(); av.style.background = isAdmin ? 'linear-gradient(135deg,#2E86C1,#1E3A5F)' : 'linear-gradient(135deg,#48C9B0,#1A9E80)'; }
+  const sn = document.getElementById('sbName'); if(sn) sn.textContent = name;
+  const sr = document.getElementById('sbRole'); if(sr) sr.textContent = isAdmin ? '🛡️ Admin' : '💼 Commercial';
+
+  // Nav dynamique
+  const nav = document.getElementById('sideNav');
+  if(!nav) return;
+  const dash = isAdmin ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+  nav.innerHTML = `
+    <div class="sb-section">Principal</div>
+    <a class="nav-a" href="${dash}"><span class="nav-ic">📊</span>Dashboard</a>
+    <a class="nav-a active" href="contacts.html"><span class="nav-ic">👥</span>${isAdmin ? 'Contacts' : 'Mes Clients'}</a>
+    <div class="sb-section">Commercial</div>
+    <a class="nav-a" href="nouveau-devis.html"><span class="nav-ic">📄</span>${isAdmin ? 'Devis' : 'Mes Devis'}</a>
+    <a class="nav-a" href="facture-preview.html"><span class="nav-ic">🧾</span>${isAdmin ? 'Factures' : 'Mes Factures'}</a>
+    <a class="nav-a" href="analyse-bon-commande.html"><span class="nav-ic">📋</span>Bons de commande</a>
+    <a class="nav-a" href="catalogue.html"><span class="nav-ic">📦</span>Catalogue</a>
+    ${isAdmin ? `
+    <div class="sb-section">Admin</div>
+    <a class="nav-a" href="admin-comptes.html"><span class="nav-ic">🔐</span>Comptes</a>
+    ` : ''}
+  `;
+})();
+</script>
 </body>
 </html>
