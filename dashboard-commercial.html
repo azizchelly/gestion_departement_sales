@@ -17,7 +17,7 @@
   --sidebar:240px;
 }
 html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-
+ 
 /* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:linear-gradient(180deg,#1A3352 0%,#1E3A5F 100%);display:flex;flex-direction:column;z-index:100}
 .sb-head{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -25,12 +25,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .logo-ic{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--emerald),#2ECC9A);display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0}
 .logo-txt{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
 .logo-txt span{color:var(--emerald)}
-
+ 
 .sb-user{margin:14px 18px 0;padding:12px;background:rgba(255,255,255,.06);border-radius:10px;display:flex;align-items:center;gap:10px}
 .sb-avatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--emerald),#1A9E80);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
 .sb-user-name{font-size:13px;font-weight:700;color:#fff}
 .sb-user-role{font-size:10px;color:var(--emerald);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
-
+ 
 .sb-nav{flex:1;padding:16px 10px;overflow-y:auto}
 .sb-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin:16px 0 6px}
 .sb-section:first-child{margin-top:0}
@@ -40,14 +40,14 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--emerald)}
 .nav-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .nav-badge{margin-left:auto;background:var(--bad);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
-
+ 
 .sb-foot{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08)}
 .logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;transition:.15s;width:100%;background:none;border:none;font-family:'Inter',sans-serif}
 .logout-btn:hover{background:rgba(220,38,38,.15);color:#FCA5A5}
-
+ 
 /* MAIN */
 .main{margin-left:var(--sidebar);min-height:100vh;display:flex;flex-direction:column}
-
+ 
 /* TOPBAR */
 .topbar{background:var(--card);border-bottom:1px solid var(--line);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-left h1{font-size:18px;font-weight:800;color:var(--brand);letter-spacing:-.3px}
@@ -60,10 +60,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .tb-btn.primary:hover{filter:brightness(1.07)}
 .notif-btn{width:36px;height:36px;border-radius:9px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;font-size:16px;position:relative;transition:.15s}
 .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--bad);border:2px solid var(--card)}
-
+ 
 /* CONTENT */
 .content{padding:24px 28px;flex:1}
-
+ 
 /* OBJECTIF BARRE */
 .obj-banner{background:linear-gradient(135deg,var(--brand),#2A5080);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#fff;box-shadow:0 4px 20px rgba(30,58,95,.2)}
 .obj-left h3{font-size:13px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
@@ -75,7 +75,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .obj-bar-bg{height:10px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden}
 .obj-bar-fill{height:100%;background:linear-gradient(90deg,var(--emerald),#2ECC9A);border-radius:5px;width:0;transition:width 1s ease}
 .obj-pct{font-size:28px;font-weight:800;color:var(--emerald);min-width:60px;text-align:right}
-
+ 
 /* ACTIONS RAPIDES */
 .quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
 .qa-btn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 14px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);font-family:'Inter',sans-serif}
@@ -86,7 +86,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .qa-ic.amber{background:rgba(217,119,6,.1)}
 .qa-txt b{display:block;font-size:13px;font-weight:700;color:var(--brand)}
 .qa-txt span{font-size:11px;color:var(--muted)}
-
+ 
 /* KPIs */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
@@ -102,10 +102,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .kpi-delta.up{background:#E6F7EF;color:var(--ok)}
 .kpi-delta.down{background:#FDECEC;color:var(--bad)}
 .kpi-icon{position:absolute;right:16px;top:16px;font-size:22px;opacity:.15}
-
+ 
 /* MAIN GRID */
 .main-grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
-
+ 
 /* CARD */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
 .card-h{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
@@ -113,7 +113,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .card-h-left .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald)}
 .card-h-left h2{font-size:14px;font-weight:700;color:var(--brand)}
 .card-link{font-size:12px;font-weight:600;color:var(--emerald);cursor:pointer;text-decoration:none}
-
+ 
 /* PIPELINE SIMPLIFIÉ */
 .mini-pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px}
 .mp-col{text-align:center}
@@ -121,7 +121,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .mp-num{font-size:22px;font-weight:800;color:var(--brand)}
 .mp-amount{font-size:11px;color:var(--muted);margin-top:3px}
 .mp-divider{width:1px;background:var(--line)}
-
+ 
 /* MES DEVIS */
 .devis-table{width:100%;border-collapse:collapse;font-size:13px}
 .devis-table th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:0 16px 10px;border-bottom:2px solid var(--line)}
@@ -139,10 +139,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .ic-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px;display:grid;place-items:center;transition:.15s}
 .ic-btn:hover{border-color:var(--emerald);background:rgba(var(--emerald-rgb),.06)}
 .ic-btn.gen:hover{border-color:var(--ok);background:#E6F7EF}
-
+ 
 /* REMISE TAG */
 .remise-tag{font-size:10px;font-weight:700;background:rgba(217,119,6,.1);color:var(--amber);padding:2px 7px;border-radius:8px;margin-left:6px}
-
+ 
 /* ACTIVITÉS */
 .act-list{display:flex;flex-direction:column}
 .act-item{display:flex;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line)}
@@ -155,7 +155,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .act-txt{font-size:13px;color:var(--text);line-height:1.4}
 .act-txt b{color:var(--brand)}
 .act-time{font-size:11px;color:var(--muted);margin-top:3px}
-
+ 
 /* CLIENTS */
 .client-list{display:flex;flex-direction:column}
 .client-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
@@ -166,7 +166,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .cl-name{font-size:13px;font-weight:700;color:var(--brand)}
 .cl-sector{font-size:11px;color:var(--muted)}
 .cl-ca{font-size:13px;font-weight:700;color:var(--ok)}
-
+ 
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;z-index:999;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1)}
 .toast.show{transform:none;opacity:1}
@@ -174,15 +174,15 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .toast.info{background:linear-gradient(135deg,var(--emerald),#1A9E80)}
 .toast.warn{background:linear-gradient(135deg,var(--amber),#B45309)}
 .toast.error{background:linear-gradient(135deg,var(--bad),#991B1B)}
-
+ 
 /* BLOCKED */
 .blocked-msg{background:#FDECEC;border:1px solid #F5C0C0;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--bad);display:flex;align-items:center;gap:10px;margin-bottom:20px}
-
+ 
 @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:1fr 1fr}.main-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
+ 
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sb-head">
@@ -202,13 +202,13 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
     <div class="sb-section">Mon espace</div>
     <a class="nav-item active" href="dashboard-commercial.html"><span class="nav-ic">📊</span>Mon Dashboard</a>
     <a class="nav-item" href="contacts.html"><span class="nav-ic">🏢</span>Mes Clients</a>
-    <a class="nav-item" href="dashboard-commercial.html#pipeline"><span class="nav-ic">🔀</span>Mon Pipeline</a>
-
+    <a class="nav-item" href="javascript:void(0)" onclick="document.getElementById('pipeline')?.scrollIntoView({behavior:'smooth'})"><span class="nav-ic">🔀</span>Mon Pipeline</a>
+ 
     <div class="sb-section">Commercial</div>
     <a class="nav-item" href="nouveau-devis.html"><span class="nav-ic">📄</span>Mes Devis<span class="nav-badge">2</span></a>
     <a class="nav-item" href="facture-preview.html"><span class="nav-ic">🧾</span>Mes Factures</a>
     <a class="nav-item" href="#"><span class="nav-ic">📑</span>Mes Contrats</a>
-
+ 
     <div class="sb-section">Catalogue</div>
     <a class="nav-item" href="contacts.html"><span class="nav-ic">📦</span>Services & Tarifs</a>
   </nav>
@@ -218,7 +218,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
     </button>
   </div>
 </aside>
-
+ 
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
@@ -232,14 +232,14 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
       <div class="notif-btn" onclick="showToast('1 notification non lue','warn')">🔔<div class="notif-dot"></div></div>
     </div>
   </div>
-
+ 
   <div class="content">
-
+ 
     <!-- ALERTE : PAS DE CHANGEMENT DE MDP -->
     <div class="blocked-msg">
       🔒 <span>Tu ne peux pas modifier ton mot de passe. Pour tout changement, contacte ton Sales Manager.</span>
     </div>
-
+ 
     <!-- OBJECTIF DU MOIS -->
     <div class="obj-banner">
       <div class="obj-left">
@@ -253,7 +253,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
       </div>
       <div class="obj-pct" id="objPct">64%</div>
     </div>
-
+ 
     <!-- ACTIONS RAPIDES -->
     <div class="quick-actions">
       <button class="qa-btn" onclick="window.location.href='nouveau-devis.html'">
@@ -269,7 +269,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
         <div class="qa-txt"><b>Voir catalogue</b><span>Prix fixés par l'Admin</span></div>
       </button>
     </div>
-
+ 
     <!-- KPIs PERSONNELS -->
     <div class="kpi-grid">
       <div class="kpi green">
@@ -297,13 +297,13 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
         <div class="kpi-sub"><span class="kpi-delta up">↑ +9pts</span> vs mois dernier</div>
       </div>
     </div>
-
+ 
     <!-- GRILLE PRINCIPALE -->
     <div class="main-grid">
-
+ 
       <!-- COLONNE GAUCHE -->
       <div style="display:flex;flex-direction:column;gap:20px">
-
+ 
         <!-- MON PIPELINE RÉSUMÉ -->
         <div class="card">
           <div class="card-h">
@@ -317,7 +317,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
             <div class="mp-col"><div class="mp-label">Perdu</div><div class="mp-num" style="color:var(--bad)">1</div><div class="mp-amount" style="color:var(--bad)">9 000 DT</div></div>
           </div>
         </div>
-
+ 
         <!-- MES DEVIS -->
         <div class="card">
           <div class="card-h">
@@ -373,12 +373,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
             </table>
           </div>
         </div>
-
+ 
       </div>
-
+ 
       <!-- COLONNE DROITE -->
       <div style="display:flex;flex-direction:column;gap:20px">
-
+ 
         <!-- MES CLIENTS -->
         <div class="card">
           <div class="card-h">
@@ -408,7 +408,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
             </div>
           </div>
         </div>
-
+ 
         <!-- ACTIVITÉS -->
         <div class="card">
           <div class="card-h">
@@ -433,12 +433,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
             </div>
           </div>
         </div>
-
+ 
       </div>
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL REMISE -->
 <div id="remiseOverlay" style="display:none;position:fixed;inset:0;background:rgba(30,58,95,.45);z-index:200;place-items:center;backdrop-filter:blur(3px)">
   <div style="background:#fff;border-radius:16px;padding:28px;width:100%;max-width:400px;margin:20px;box-shadow:0 24px 64px rgba(30,58,95,.2)">
@@ -467,26 +467,26 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
     </div>
   </div>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // Barre objectif animée
 setTimeout(() => {
   document.getElementById('objBar').style.width = '64%';
 }, 300);
-
+ 
 function showToast(msg, type='info') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast ' + type;
   void t.offsetWidth; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3200);
 }
-
+ 
 function genFacture() {
   showToast('✅ Facture FACT-2026-007 générée depuis DEV-2026-007 — DataCore !', 'success');
 }
-
+ 
 function modifierRemise() {
   document.getElementById('remiseOverlay').style.display = 'grid';
 }
@@ -510,3 +510,4 @@ function saveRemise() {
 </script>
 </body>
 </html>
+ 
