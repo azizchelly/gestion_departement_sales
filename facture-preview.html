@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
-
+ 
 /* TOPBAR */
 .topbar{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
 .topbar-l{display:flex;align-items:center;gap:10px}
@@ -20,12 +20,12 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
 .tbtn.back:hover{background:rgba(255,255,255,.22)}
 .tbtn.print{background:linear-gradient(135deg,#1E9E6A,#13784f);color:#fff}
 .tbtn.print:hover{filter:brightness(1.08)}
-
+ 
 /* FEUILLE */
 .page-wrap{max-width:800px;margin:24px auto;padding:0 16px 40px}
 .sheet{background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.13);border-radius:3px;overflow:hidden}
 .doc{padding:20px 22px 16px;font-size:11.5px;color:#111}
-
+ 
 /* EN-TÊTE */
 .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .head-left{}
@@ -39,19 +39,19 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
 .barcode{display:flex;gap:1.5px;align-items:flex-end;height:44px}
 .barcode .b{background:#111;border-radius:.5px}
 .pages{font-size:9px;color:#888;text-align:right;margin-top:4px}
-
+ 
 .divider{height:3px;background:linear-gradient(90deg,#1E3A5F,#2E86C1,#48C9B0);margin:10px 0}
-
+ 
 /* TITRE + META */
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
 .title-block .num{font-size:26px;font-weight:900;color:#1E3A5F;line-height:1;letter-spacing:-1px}
 .title-block .lbl{font-size:12px;color:#888;margin-top:2px;font-weight:600}
-
+ 
 /* TABLEAU REF */
 .ref-tbl{width:100%;border-collapse:collapse;margin-top:8px;font-size:10.5px}
 .ref-tbl th{background:#D6E4F0;color:#1E3A5F;font-weight:700;padding:5px 7px;border:1px solid #bdd0e0;text-align:left}
 .ref-tbl td{padding:5px 7px;border:1px solid #d0dcea;background:#fff}
-
+ 
 /* BLOC CLIENT */
 .client-box{border:1px solid #bdd0e0;border-radius:3px;overflow:hidden;font-size:10.5px}
 .client-name{background:#1E3A5F;color:#fff;font-weight:800;font-size:13px;padding:7px 10px;text-align:center}
@@ -59,7 +59,7 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
 .client-row:last-child{border:none}
 .client-row .k{color:#888;font-weight:700;min-width:100px;font-size:10px}
 .client-row .v{color:#111}
-
+ 
 /* TABLEAU SERVICES */
 .svc{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
 .svc thead tr{background:#1E3A5F}
@@ -75,17 +75,17 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
 .svc tfoot td{padding:6px 8px;font-weight:700}
 .svc tfoot td.r{text-align:right}
 .svc tfoot td.c{text-align:center}
-
+ 
 /* BAS */
 .foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-
+ 
 /* TVA */
 .tva-tbl{width:100%;border-collapse:collapse;font-size:10px}
 .tva-tbl th{background:#D6E4F0;color:#1E3A5F;font-weight:700;padding:5px 7px;border:1px solid #bdd0e0;text-align:center}
 .tva-tbl td{padding:5px 7px;border:1px solid #d0dcea;text-align:right;font-size:10.5px}
 .arrete{margin-top:8px;font-size:10px;color:#444}
 .arrete b{display:block;font-size:12.5px;font-weight:700;font-style:italic;color:#1E3A5F;margin-top:3px}
-
+ 
 /* TOTAUX DROITE */
 .tot-box{border:1px solid #bdd0e0;border-radius:3px;overflow:hidden;font-size:11px}
 .tot-row{display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid #e4ebf2}
@@ -98,10 +98,10 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
 .mode-box{border:1px solid #d0dcea;border-top:none;border-radius:0 0 3px 3px;padding:6px 10px;display:flex;justify-content:space-between;font-size:10.5px;background:#fafbfd}
 .mode-box .k{color:#888;font-weight:700}
 .mode-box .v{color:#1E3A5F;font-weight:600}
-
+ 
 /* PIED PAGE */
 .doc-footer{border-top:1px solid #d0dcea;margin-top:12px;padding-top:7px;display:flex;justify-content:space-between;font-size:9px;color:#999}
-
+ 
 /* PRINT */
 @media print{
   .topbar{display:none!important}
@@ -113,7 +113,7 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
 </style>
 </head>
 <body>
-
+ 
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-l">
@@ -125,12 +125,12 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
     <button class="tbtn print" onclick="imprimer()">🖨️ Imprimer / Enregistrer PDF</button>
   </div>
 </div>
-
+ 
 <!-- FEUILLE -->
 <div class="page-wrap">
 <div class="sheet">
 <div class="doc">
-
+ 
   <!-- EN-TÊTE -->
   <div class="head">
     <div class="head-left">
@@ -154,9 +154,9 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
       <div class="pages">1 Page(s)</div>
     </div>
   </div>
-
+ 
   <div class="divider"></div>
-
+ 
   <!-- TITRE + META -->
   <div class="meta">
     <div class="title-block">
@@ -178,12 +178,12 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
       <div class="client-row"><span class="k">Téléphone:</span><span class="v" id="d_tel"></span></div>
     </div>
   </div>
-
+ 
   <!-- OBJET -->
   <div id="d_objet_wrap" style="background:#f0f6ff;border-left:3px solid #2E86C1;padding:5px 10px;margin-bottom:8px;font-size:10.5px;color:#1E3A5F;display:none">
     <b>Objet :</b> <span id="d_objet"></span>
   </div>
-
+ 
   <!-- TABLEAU SERVICES -->
   <table class="svc">
     <thead>
@@ -206,10 +206,10 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
       </tr>
     </tfoot>
   </table>
-
+ 
   <!-- BAS DE PAGE -->
   <div class="foot-grid">
-
+ 
     <!-- GAUCHE TVA -->
     <div>
       <table class="tva-tbl">
@@ -224,7 +224,7 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
         <b id="d_lettres">Zéro Dinars Tunisiens</b>
       </div>
     </div>
-
+ 
     <!-- DROITE TOTAUX -->
     <div>
       <div class="tot-box">
@@ -243,22 +243,22 @@ body{font-family:Arial,sans-serif;background:#e8edf3;min-height:100vh}
         <span class="v" id="d_mode">Virement bancaire</span>
       </div>
     </div>
-
+ 
   </div>
-
+ 
   <!-- PIED -->
   <div class="doc-footer">
     <span id="d_footer">Facture pour —</span>
     <span>Page 1/1</span>
   </div>
-
+ 
 </div>
 </div>
 </div>
-
+ 
 <script>
 const TVA=0.20, TIMBRE=1.0;
-
+ 
 /* ── BARCODE ── */
 (function(){
   const bc=document.getElementById('bc');
@@ -269,13 +269,13 @@ const TVA=0.20, TIMBRE=1.0;
     bc.appendChild(b);
   });
 })();
-
+ 
 /* ── FORMAT ── */
 function fn(n,d=3){
   return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(parseFloat(n)||0);
 }
 function fdt(n){return fn(n)+' DT';}
-
+ 
 /* ── CHARGER ── */
 function charger(d){
   const ref=d.ref||'FACT-2026-001';
@@ -293,13 +293,13 @@ function charger(d){
     document.getElementById('d_objet').textContent=d.objet;
     document.getElementById('d_objet_wrap').style.display='block';
   }
-
+ 
   // Lignes
   const lines=(d.lines||[]).filter(l=>l.service);
   const tbody=document.getElementById('svcBody');
   tbody.innerHTML='';
   let totQ=0,totTTC=0;
-
+ 
   lines.forEach((l,i)=>{
     const qty=parseFloat(l.qty)||0;
     const pu=parseFloat(l.price)||0;
@@ -314,16 +314,16 @@ function charger(d){
       <td class="r bl">${fn(ttc)}</td>
     </tr>`;
   });
-
+ 
   // Lignes vides (min 14)
   for(let i=lines.length;i<14;i++){
     tbody.innerHTML+='<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>';
   }
-
+ 
   document.getElementById('tf_count').textContent=lines.length;
   document.getElementById('tf_qte').textContent=fn(totQ,2);
   document.getElementById('tf_ttc').textContent=fn(totTTC);
-
+ 
   // Calculs
   const ht=lines.reduce((s,l)=>s+(parseFloat(l.qty)||0)*(parseFloat(l.price)||0),0);
   const pct=parseFloat(d.remise_pct)||0;
@@ -331,7 +331,7 @@ function charger(d){
   const htF=ht-remise;
   const tva=htF*TVA;
   const net=htF+tva+TIMBRE;
-
+ 
   document.getElementById('d_remise').textContent = fdt(remise);
   document.getElementById('d_tva').textContent    = fdt(tva);
   document.getElementById('d_ht').textContent     = fdt(htF);
@@ -341,7 +341,7 @@ function charger(d){
   document.getElementById('tva_m1').textContent   = fn(htF*.143);
   document.getElementById('tva_b2').textContent   = fn(0);
 }
-
+ 
 /* ── MONTANT EN LETTRES ── */
 function enLettres(n){
   const u=['','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
@@ -352,16 +352,16 @@ function enLettres(n){
   const s=mil(n);
   return s.charAt(0).toUpperCase()+s.slice(1)+' Dinars Tunisiens';
 }
-
+ 
 /* ── IMPRIMER ── */
 function imprimer(){
   window.print();
 }
-
+ 
 /* ── INIT ── */
 const saved=JSON.parse(localStorage.getItem('sf_devis')||'[]');
 const devis=saved.filter(d=>d.statut==='envoyé').pop()||saved[saved.length-1];
-
+ 
 if(devis){
   charger({...devis, ref:devis.ref.replace('DEV','FACT'), mf:'', adresse:'', tel:''});
 } else {
