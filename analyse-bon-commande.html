@@ -141,7 +141,7 @@
       <div id="dLines"></div>
       <button class="btn ghost" style="margin-top:8px;padding:8px;font-size:13px" onclick="addLine()">+ Ajouter une ligne</button>
 
-      <div class="tot"><span>TOTAL DEVIS (HT)</span><span id="dTotal">0 €</span></div>
+      <div class="tot"><span>TOTAL DEVIS (HT)</span><span id="dTotal">0 DT</span></div>
       <div class="hint">C'est le devis que tu as déjà envoyé et validé. L'appli comparera le bon de commande à <b>ce</b> document.</div>
     </div>
   </aside>
@@ -163,7 +163,7 @@
           <input id="bcRef" placeholder="ex : BC-2026-0457">
           <label>Client (tel qu'indiqué sur le BC)</label>
           <input id="bcClient" placeholder="ex : TechNova Solutions">
-          <label>Montant total commandé (HT, €)</label>
+          <label>Montant total commandé (HT, DT)</label>
           <input id="bcTotal" type="number" placeholder="ex : 8400">
           <label>Bon de commande signé / cacheté ?</label>
           <select id="bcSigned"><option value="oui">Oui</option><option value="non">Non</option></select>
@@ -223,7 +223,7 @@ function renderLines(){
     const row=document.createElement('div');row.className='devis-line';
     row.innerHTML=`<div><label>Service</label><input value="${l.label}" oninput="upd(${i},'label',this.value)"></div>
       <div><label>Qté</label><input type="number" value="${l.qty}" oninput="upd(${i},'qty',this.value)"></div>
-      <div><label>P.U. €</label><input type="number" value="${l.price}" oninput="upd(${i},'price',this.value)"></div>`;
+      <div><label>P.U. DT</label><input type="number" value="${l.price}" oninput="upd(${i},'price',this.value)"></div>`;
     c.appendChild(row);
   });
   total();
@@ -232,7 +232,7 @@ function upd(i,k,v){devis[i][k]=(k==='label')?v:parseFloat(v)||0;total();}
 function addLine(){devis.push({label:'',qty:1,price:0});renderLines();}
 function devisTotal(){return devis.reduce((s,l)=>s+l.qty*l.price,0);}
 function total(){document.getElementById('dTotal').textContent=fmt(devisTotal());}
-function fmt(n){return new Intl.NumberFormat('fr-FR').format(n)+' €';}
+function fmt(n){return new Intl.NumberFormat('fr-FR').format(n)+' DT';}
 
 /* ---------- Onglets ---------- */
 function tab(t){
@@ -312,8 +312,8 @@ function extract(text){
   const t=text.replace(/\s+/g,' ');
   // Référence BC : BC-... / N° ... / Commande ...
   let ref=(t.match(/(?:BC|B\.C\.|bon de commande|commande|N[°o]?)\s*[:\-#]?\s*([A-Z0-9\-\/]{4,})/i)||[])[1];
-  // Montant : cherche tous les nombres avec € ou "total"
-  let amounts=[...t.matchAll(/(\d[\d\s.,]{2,})\s*(?:€|eur|euros|ht)/gi)].map(m=>parseNum(m[1]));
+  // Montant : cherche tous les nombres avec DT ou "total"
+  let amounts=[...t.matchAll(/(\d[\d\s.,]{2,})\s*(?: DT|eur|euros|ht)/gi)].map(m=>parseNum(m[1]));
   let totalMatch=t.match(/total[^0-9]{0,15}(\d[\d\s.,]{2,})/i);
   let amount=totalMatch?parseNum(totalMatch[1]):(amounts.length?Math.max(...amounts):null);
   // Signé ?
