@@ -156,6 +156,16 @@ html,body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var
 .empty-ic{font-size:40px;margin-bottom:12px}
 .empty b{display:block;font-size:15px;color:var(--text);margin-bottom:4px}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+<script>
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+const sb = supabase.createClient(SB_URL, SB_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true },
+  realtime: { params: { eventsPerSecond: 10 } },
+  global: { fetch: fetch.bind(globalThis) }
+});
+</script>
 </head>
 <body>
 
@@ -337,35 +347,60 @@ const CATS = {
   'Autre':               { ic:'📦', color:'#1E3A5F', bg:'rgba(30,58,95,.08)' },
 };
 
-function loadProducts() {
-  // Services par défaut TOUJOURS présents (visibles par tous les rôles)
-  const defaults = [
-    { id:1,  nom:"Audit cybersécurité",           cat:"Cybersécurité",          desc:"Audit complet de sécurité du système d information",       prix:3500,  unite:"forfait", statut:"actif" },
-    { id:2,  nom:"Développement portail web",      cat:"Développement",          desc:"Conception et développement portail web sur mesure",   prix:4900,  unite:"forfait", statut:"actif" },
-    { id:3,  nom:"Développement ERP sur mesure",   cat:"Développement",          desc:"ERP complet adapté aux besoins métier",                      prix:18000, unite:"forfait", statut:"actif" },
-    { id:4,  nom:"Formation DevOps",               cat:"Formation",              desc:"Formation DevOps : CI/CD, Docker, Kubernetes",               prix:600,   unite:"jour",    statut:"actif" },
-    { id:5,  nom:"Migration cloud AWS",            cat:"Cloud & Infrastructure", desc:"Migration infrastructure vers AWS",                    prix:8200,  unite:"forfait", statut:"actif" },
-    { id:6,  nom:"Infogérance mensuelle",          cat:"Infogérance",            desc:"Gestion et maintenance infrastructure IT",             prix:1200,  unite:"mois",    statut:"actif" },
-    { id:7,  nom:"Conseil & Audit SI",             cat:"Conseil & Audit",        desc:"Conseil stratégique et audit du système information",     prix:950,   unite:"jour",    statut:"actif" },
-    { id:8,  nom:"Développement mobile",           cat:"Développement",          desc:"Application mobile iOS et Android",                          prix:6500,  unite:"forfait", statut:"actif" },
-    { id:9,  nom:"Maintenance corrective",         cat:"Maintenance",            desc:"Maintenance corrective et évolutive des applications",       prix:800,   unite:"mois",    statut:"actif" },
-    { id:10, nom:"Formation Cybersécurité",        cat:"Formation",              desc:"Sensibilisation et formation à la sécurité informatique",    prix:450,   unite:"jour",    statut:"actif" },
-  ];
-
-  // Recuperer les modifications Admin (ajouts/suppressions/prix)
+async function loadProducts() {
   try {
-    const saved = localStorage.getItem('sf_catalogue');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    const { data, error } = await sb.from("catalogue").select("*").order("id");
+    if (error) throw error;
+    if (data && data.length > 0) {
+      // Mapper les colonnes Supabase vers notre format
+      return data.map(r => ({
+        id: r.id,
+        nom: r.nom,
+        cat: r.categorie,
+        desc: r.description,
+        prix: parseFloat(r.prix_unitaire) || 0,
+        unite: r.unite || "forfait",
+        statut: r.actif ? "actif" : "inactif"
+      }));
     }
-  } catch(e) {}
-
-  // Sauvegarder les défauts et les retourner
-  localStorage.setItem('sf_catalogue', JSON.stringify(defaults));
-  return defaults;
+  } catch(e) {
+    console.error("Erreur Supabase catalogue:", e);
+  }
+  return [];
 }
-function saveProducts(p) { localStorage.setItem('sf_catalogue', JSON.stringify(p)); }
+
+async function saveProduct_SB(obj, editId) {
+  const row = {
+    nom: obj.nom,
+    categorie: obj.cat,
+    description: obj.desc,
+    prix_unitaire: obj.prix,
+    unite: obj.unite,
+    actif: obj.statut === "actif"
+  };
+  if (editId) {
+    const { error } = await sb.from("catalogue").update(row).eq("id", editId);
+    if (error) { showToast("Erreur mise à jour: " + error.message, "error"); return false; }
+  } else {
+    const { error } = await sb.from("catalogue").insert(row);
+    if (error) { showToast("Erreur ajout: " + error.message, "error"); return false; }
+  }
+  return true;
+}
+
+async function deleteProduct_SB(id) {
+  const { error } = await sb.from("catalogue").delete().eq("id", id);
+  if (error) { showToast("Erreur suppression: " + error.message, "error"); return false; }
+  return true;
+}
+
+async function toggleStatus_SB(id, actif) {
+  const { error } = await sb.from("catalogue").update({ actif }).eq("id", id);
+  if (error) { showToast("Erreur: " + error.message, "error"); return false; }
+  return true;
+}
+
+function saveProducts(p) {} // kept for compatibility
 let products = loadProducts();
 
 /* ══════════════════════════════════
@@ -474,56 +509,51 @@ function openModal(id = null) {
 
 function closeModal() { document.getElementById('overlay').classList.remove('show'); }
 
-function saveProduct() {
-  const nom  = document.getElementById('f_nom').value.trim();
-  const prix = parseFloat(document.getElementById('f_prix').value);
-  if (!nom)        { showToast('⚠️ Le nom est obligatoire','error'); return; }
-  if (!prix || prix <= 0) { showToast('⚠️ Le prix doit être supérieur à 0','error'); return; }
-
-  const editId = document.getElementById('editId').value;
+async function saveProduct() {
+  const nom  = document.getElementById("f_nom").value.trim();
+  const prix = parseFloat(document.getElementById("f_prix").value);
+  if (!nom)           { showToast("Nom obligatoire","error"); return; }
+  if (!prix || prix<=0){ showToast("Prix doit être > 0","error"); return; }
+  const editId = document.getElementById("editId").value;
   const obj = {
     nom, prix,
-    cat:    document.getElementById('f_cat').value,
-    desc:   document.getElementById('f_desc').value,
-    unite:  document.getElementById('f_unite').value,
-    statut: document.getElementById('f_statut').value,
+    cat:    document.getElementById("f_cat").value,
+    desc:   document.getElementById("f_desc").value,
+    unite:  document.getElementById("f_unite").value,
+    statut: document.getElementById("f_statut").value,
   };
-
-  if (editId) {
-    const idx = products.findIndex(p => p.id == editId);
-    products[idx] = { ...products[idx], ...obj };
-    showToast('✅ Service mis à jour', 'success');
-  } else {
-    obj.id = Date.now();
-    products.push(obj);
-    showToast('✅ Service ajouté au catalogue', 'success');
-  }
-  saveProducts(products);
+  const ok = await saveProduct_SB(obj, editId || null);
+  if (!ok) return;
+  showToast(editId ? "✅ Service mis à jour" : "✅ Service ajouté", "success");
   closeModal();
+  products = await loadProducts();
   renderCatFilter();
   renderProducts();
 }
 
 function editProduct(id) { if (ROLE !== 'admin') return; openModal(id); }
 
-function deleteProduct(id) {
-  if (ROLE !== 'admin') return;
+async function deleteProduct(id) {
+  if (ROLE !== "admin") return;
   const p = products.find(x => x.id === id);
-  if (!confirm(`Supprimer "${p.nom}" du catalogue ?`)) return;
-  products = products.filter(x => x.id !== id);
-  saveProducts(products);
+  if (!confirm("Supprimer " + p.nom + " du catalogue ?")) return;
+  const ok = await deleteProduct_SB(id);
+  if (!ok) return;
+  products = await loadProducts();
   renderCatFilter();
   renderProducts();
-  showToast('🗑️ Service supprimé', 'warn');
+  showToast("🗑️ Service supprimé", "warn");
 }
 
-function toggleStatus(id) {
-  if (ROLE !== 'admin') return;
+async function toggleStatus(id) {
+  if (ROLE !== "admin") return;
   const p = products.find(x => x.id === id);
-  p.statut = p.statut === 'actif' ? 'inactif' : 'actif';
-  saveProducts(products);
+  const newActif = p.statut !== "actif";
+  const ok = await toggleStatus_SB(id, newActif);
+  if (!ok) return;
+  products = await loadProducts();
   renderProducts();
-  showToast(p.statut === 'actif' ? '✅ Service activé' : '⏸️ Service désactivé', 'info');
+  showToast(newActif ? "✅ Service activé" : "⏸️ Service désactivé", "info");
 }
 
 /* ══════════════════════════════════
@@ -586,9 +616,12 @@ function showToast(msg, type='info') {
 /* ══════════════════════════════════
    INIT
 ══════════════════════════════════ */
-setupRole();
-renderCatFilter();
-renderProducts();
+(async function() {
+  products = await loadProducts();
+  setupRole();
+  renderCatFilter();
+  renderProducts();
+})();
 </script>
 
 <script>
