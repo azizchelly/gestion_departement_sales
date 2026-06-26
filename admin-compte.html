@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesFlow Pro — Gestion des Comptes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1E3A5F;--accent:#2E86C1;--accent-rgb:46,134,193;
+  --emerald:#48C9B0;--bg:#F4F6F9;--white:#fff;
+  --text:#1F2933;--muted:#6B7785;--line:#E2E8F0;
+  --ok:#1E9E6A;--okbg:#E6F7EF;--warn:#D97706;--warnbg:#FEF3E2;
+  --bad:#DC2626;--badbg:#FDECEC;
+  --shadow:0 1px 3px rgba(30,58,95,.08),0 4px 16px rgba(30,58,95,.06);
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{background:var(--brand);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100}
+.nav-left{display:flex;align-items:center;gap:14px}
+.logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--emerald));display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff}
+.nav-title{font-size:15px;font-weight:700;color:#fff}
+.nav-title span{color:var(--emerald)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-badge{background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px}
+.nav-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
+.nav-btn:hover{background:rgba(255,255,255,.15)}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:28px auto;padding:0 20px;display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.card-h{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.card-h-left{display:flex;align-items:center;gap:9px}
+.card-h-left .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.card-h-left h2{font-size:14px;font-weight:700;color:var(--brand)}
+.card-b{padding:20px}
+
+/* FORM */
+label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field{margin-bottom:16px}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{
+  width:100%;padding:11px 14px 11px 40px;
+  border:1.5px solid var(--line);border-radius:9px;
+  font-size:14px;font-family:'Inter',sans-serif;color:var(--text);
+  background:#fff;transition:.2s;outline:none;
+}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.1)}
+.input-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.4;pointer-events:none}
+.hint{font-size:11px;color:var(--muted);margin-top:5px}
+
+.pw-gen{display:flex;gap:8px}
+.pw-gen input{flex:1}
+.gen-btn{padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;font-size:14px;transition:.2s;white-space:nowrap;font-family:'Inter',sans-serif;color:var(--muted);font-weight:500}
+.gen-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.role-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.rs-opt{border:1.5px solid var(--line);border-radius:9px;padding:12px;cursor:pointer;transition:.2s;text-align:center}
+.rs-opt:hover{border-color:rgba(var(--accent-rgb),.4)}
+.rs-opt.on{border-color:var(--accent);background:rgba(var(--accent-rgb),.05)}
+.rs-opt .rs-ic{font-size:20px;margin-bottom:4px}
+.rs-opt .rs-name{font-size:12px;font-weight:700;color:var(--brand)}
+.rs-opt .rs-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+.divider{height:1px;background:var(--line);margin:18px 0}
+
+.btn{width:100%;padding:13px;border:none;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--brand));color:#fff;box-shadow:0 4px 14px rgba(var(--accent-rgb),.3)}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+
+/* LISTE COMPTES */
+.count-bar{display:flex;align-items:center;gap:8px}
+.count-pill{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+
+.search-bar{padding:14px 20px;border-bottom:1px solid var(--line);position:relative}
+.search-bar input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:.2s}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar .s-ic{position:absolute;left:32px;top:50%;transform:translateY(-50%);opacity:.35;font-size:14px}
+
+.accounts-list{max-height:520px;overflow-y:auto}
+.acc-item{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);transition:.15s}
+.acc-item:last-child{border-bottom:none}
+.acc-item:hover{background:#FAFBFC}
+
+.avatar{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0}
+.avatar.admin{background:linear-gradient(135deg,var(--accent),var(--brand))}
+.avatar.commercial{background:linear-gradient(135deg,var(--emerald),#1A9E80)}
+
+.acc-info{flex:1;min-width:0}
+.acc-name{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc-email{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.acc-meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.3px}
+.badge.admin{background:rgba(var(--accent-rgb),.1);color:var(--accent)}
+.badge.commercial{background:rgba(72,201,176,.12);color:#1A9E80}
+.badge.actif{background:var(--okbg);color:var(--ok)}
+.badge.inactif{background:#F1F3F5;color:var(--muted)}
+.badge.suspendu{background:var(--badbg);color:var(--bad)}
+
+.acc-actions{display:flex;gap:6px;margin-top:4px}
+.ic-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:13px;display:grid;place-items:center;transition:.2s}
+.ic-btn:hover{border-color:var(--accent);background:rgba(var(--accent-rgb),.06)}
+.ic-btn.danger:hover{border-color:var(--bad);background:var(--badbg)}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(30,58,95,.45);z-index:200;display:none;place-items:center;backdrop-filter:blur(3px)}
+.overlay.show{display:grid;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:420px;margin:20px;box-shadow:0 24px 64px rgba(30,58,95,.2);animation:modalIn .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalIn{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:17px;font-weight:800;color:var(--brand);margin-bottom:6px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.modal-btns button{padding:11px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;border:none;transition:.2s}
+.modal-btns .cancel{background:var(--line);color:var(--text)}
+.modal-btns .cancel:hover{background:#D1D9E3}
+.modal-btns .confirm{background:linear-gradient(135deg,#DC2626,#991B1B);color:#fff}
+.modal-btns .confirm-suspend{background:linear-gradient(135deg,var(--warn),#B45309);color:#fff}
+.modal-btns .confirm-restore{background:linear-gradient(135deg,var(--ok),#13784f);color:#fff}
+
+/* CREDENTIAL BOX */
+.cred-box{background:var(--brand);border-radius:12px;padding:18px;margin-top:16px}
+.cred-box p{font-size:11px;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.cred-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cred-row:last-child{margin-bottom:0}
+.cred-row span:first-child{font-size:12px;color:rgba(255,255,255,.6)}
+.cred-val{font-size:13px;color:#fff;font-weight:700;font-family:ui-monospace,monospace}
+.copy-btn{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s}
+.copy-btn:hover{background:rgba(255,255,255,.22)}
+.cred-notice{font-size:11px;color:rgba(255,255,255,.5);margin-top:12px;line-height:1.5;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1);max-width:300px}
+.toast.show{transform:none;opacity:1}
+.toast.success{background:linear-gradient(135deg,var(--ok),#13784f)}
+.toast.error{background:linear-gradient(135deg,var(--bad),#991B1B)}
+.toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
+
+.empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:13px}
+.empty .empty-ic{font-size:32px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="logo">SF</div>
+    <div class="nav-title">Sales<span>Flow</span> Pro</div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-badge">🛡️ Admin · Sales Manager</span>
+    <button class="nav-btn" onclick="showToast('← Retour au Dashboard','info')">← Dashboard</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- CRÉER UN COMPTE -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-h-left"><div class="dot"></div><h2>Créer un compte</h2></div>
+    </div>
+    <div class="card-b">
+
+      <div class="field">
+        <label>Rôle du compte</label>
+        <div class="role-sel">
+          <div class="rs-opt" id="rs-commercial" onclick="setNewRole('commercial')">
+            <div class="rs-ic">💼</div>
+            <div class="rs-name">Commercial</div>
+            <div class="rs-sub">Accès portefeuille</div>
+          </div>
+          <div class="rs-opt on" id="rs-admin" onclick="setNewRole('admin')">
+            <div class="rs-ic">🛡️</div>
+            <div class="rs-name">Admin</div>
+            <div class="rs-sub">Accès complet</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Prénom & Nom</label>
+        <div class="input-wrap">
+          <span class="input-ic">👤</span>
+          <input type="text" id="newName" placeholder="ex : Amjad Gharssellaoui">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Adresse email</label>
+        <div class="input-wrap">
+          <span class="input-ic">✉️</span>
+          <input type="email" id="newEmail" placeholder="ex : amjad@societe.tn">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mot de passe provisoire</label>
+        <div class="pw-gen">
+          <div class="input-wrap" style="flex:1">
+            <span class="input-ic">🔑</span>
+            <input type="text" id="newPw" placeholder="Générer ou saisir">
+          </div>
+          <button class="gen-btn" onclick="genPw()">🎲 Générer</button>
+        </div>
+        <div class="hint">Le commercial devra changer ce mot de passe à sa première connexion.</div>
+      </div>
+
+      <div class="field">
+        <label>Téléphone (optionnel)</label>
+        <div class="input-wrap">
+          <span class="input-ic">📞</span>
+          <input type="tel" id="newPhone" placeholder="ex : +216 XX XXX XXX">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <button class="btn btn-primary" onclick="createAccount()">✚ Créer le compte</button>
+    </div>
+  </div>
+
+  <!-- LISTE DES COMPTES -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-h-left">
+        <div class="dot"></div>
+        <h2>Comptes actifs</h2>
+      </div>
+      <div class="count-bar">
+        <span class="count-pill" id="countPill">0</span>
+      </div>
+    </div>
+    <div class="search-bar">
+      <span class="s-ic">🔍</span>
+      <input type="text" placeholder="Rechercher par nom ou email…" oninput="filterAccounts(this.value)">
+    </div>
+    <div class="accounts-list" id="accountsList"></div>
+  </div>
+
+</div>
+
+<!-- MODAL CONFIRMATION -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <h3 id="modalTitle"></h3>
+    <p id="modalBody"></p>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal()">Annuler</button>
+      <button id="modalConfirm"></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IDENTIFIANTS -->
+<div class="overlay" id="credOverlay">
+  <div class="modal">
+    <h3>✅ Compte créé avec succès</h3>
+    <p>Transmets ces identifiants au commercial de manière sécurisée (message privé, email chiffré). Il devra changer son mot de passe à la première connexion.</p>
+    <div class="cred-box">
+      <p>Identifiants de connexion</p>
+      <div class="cred-row">
+        <span>Email</span>
+        <span class="cred-val" id="credEmail"></span>
+        <button class="copy-btn" onclick="copyText('credEmail')">Copier</button>
+      </div>
+      <div class="cred-row">
+        <span>Mot de passe</span>
+        <span class="cred-val" id="credPw"></span>
+        <button class="copy-btn" onclick="copyText('credPw')">Copier</button>
+      </div>
+      <div class="cred-row">
+        <span>Rôle</span>
+        <span class="cred-val" id="credRole"></span>
+      </div>
+      <div class="cred-notice">⚠️ Ces identifiants ne seront plus affichés après fermeture de cette fenêtre. Sauvegarde-les maintenant.</div>
+    </div>
+    <div class="modal-btns" style="grid-template-columns:1fr">
+      <button class="confirm-restore" onclick="closeCredModal()" style="padding:12px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;border:none;background:linear-gradient(135deg,var(--ok),#13784f);color:#fff">C'est noté, fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== ÉTAT ====== */
+let newRole = 'admin';
+let accounts = [
+  { id:1, name:'Sales Manager', email:'admin@salesflow.tn', role:'admin', status:'actif', phone:'', pw:'Admin2026!' },
+];
+let filterVal = '';
+let pendingAction = null;
+
+/* ====== RÔLE DU NOUVEAU COMPTE ====== */
+function setNewRole(r) {
+  newRole = r;
+  document.getElementById('rs-admin').classList.toggle('on', r === 'admin');
+  document.getElementById('rs-commercial').classList.toggle('on', r === 'commercial');
+}
+
+/* ====== GÉNÉRATION MOT DE PASSE ====== */
+function genPw() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#';
+  let pw = '';
+  for (let i = 0; i < 10; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('newPw').value = pw;
+}
+
+/* ====== CRÉER UN COMPTE ====== */
+function createAccount() {
+  const name  = document.getElementById('newName').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  const pw    = document.getElementById('newPw').value.trim();
+  const phone = document.getElementById('newPhone').value.trim();
+
+  if (!name)  { showToast('⚠️ Renseigne le nom complet', 'error'); return; }
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) { showToast('⚠️ Email invalide', 'error'); return; }
+  if (!pw || pw.length < 6) { showToast('⚠️ Mot de passe trop court (min 6 car.)', 'error'); return; }
+  if (accounts.find(a => a.email.toLowerCase() === email.toLowerCase())) {
+    showToast('⚠️ Cet email existe déjà', 'error'); return;
+  }
+
+  const acc = {
+    id: Date.now(), name, email, role: newRole,
+    status: 'actif', phone, pw,
+    created: new Date().toLocaleDateString('fr-FR')
+  };
+  accounts.push(acc);
+  renderAccounts();
+
+  // Afficher les identifiants
+  document.getElementById('credEmail').textContent = email;
+  document.getElementById('credPw').textContent = pw;
+  document.getElementById('credRole').textContent = newRole === 'admin' ? '🛡️ Admin' : '💼 Commercial';
+  document.getElementById('credOverlay').classList.add('show');
+
+  // Reset formulaire
+  document.getElementById('newName').value = '';
+  document.getElementById('newEmail').value = '';
+  document.getElementById('newPw').value = '';
+  document.getElementById('newPhone').value = '';
+}
+
+function closeCredModal() {
+  document.getElementById('credOverlay').classList.remove('show');
+  showToast('✅ Compte créé et prêt à l\'emploi', 'success');
+}
+
+/* ====== RENDU LISTE ====== */
+function renderAccounts() {
+  const list = document.getElementById('accountsList');
+  const f = filterVal.toLowerCase();
+  const filtered = accounts.filter(a =>
+    a.name.toLowerCase().includes(f) || a.email.toLowerCase().includes(f)
+  );
+
+  document.getElementById('countPill').textContent = accounts.length;
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-ic">🔍</div>Aucun compte trouvé</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(a => `
+    <div class="acc-item" id="acc-${a.id}">
+      <div class="avatar ${a.role}">${a.name.charAt(0).toUpperCase()}</div>
+      <div class="acc-info">
+        <div class="acc-name">${a.name}</div>
+        <div class="acc-email">${a.email}${a.phone ? ' · '+a.phone : ''}</div>
+      </div>
+      <div class="acc-meta">
+        <div style="display:flex;gap:5px">
+          <span class="badge ${a.role}">${a.role === 'admin' ? '🛡️ Admin' : '💼 Commercial'}</span>
+          <span class="badge ${a.status}">${a.status}</span>
+        </div>
+        <div class="acc-actions">
+          ${a.status === 'actif'
+            ? `<button class="ic-btn" title="Suspendre" onclick="confirmSuspend(${a.id})">⏸️</button>`
+            : `<button class="ic-btn" title="Réactiver" onclick="confirmRestore(${a.id})">▶️</button>`
+          }
+          <button class="ic-btn" title="Modifier" onclick="editAccount(${a.id})">✏️</button>
+          ${a.role !== 'admin' || accounts.filter(x=>x.role==='admin').length > 1
+            ? `<button class="ic-btn danger" title="Supprimer" onclick="confirmDelete(${a.id})">🗑️</button>`
+            : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterAccounts(v) { filterVal = v; renderAccounts(); }
+
+/* ====== ACTIONS ====== */
+function confirmSuspend(id) {
+  const a = accounts.find(x => x.id === id);
+  openModal(
+    `Suspendre le compte de ${a.name} ?`,
+    `${a.name} (${a.role}) ne pourra plus se connecter tant que son compte est suspendu. Tu pourras le réactiver à tout moment.`,
+    'confirm-suspend', 'Suspendre',
+    () => { a.status = 'suspendu'; renderAccounts(); showToast(`⏸️ ${a.name} suspendu`, 'info'); }
+  );
+}
+
+function confirmRestore(id) {
+  const a = accounts.find(x => x.id === id);
+  openModal(
+    `Réactiver le compte de ${a.name} ?`,
+    `${a.name} pourra à nouveau se connecter à SalesFlow Pro.`,
+    'confirm-restore', 'Réactiver',
+    () => { a.status = 'actif'; renderAccounts(); showToast(`✅ ${a.name} réactivé`, 'success'); }
+  );
+}
+
+function confirmDelete(id) {
+  const a = accounts.find(x => x.id === id);
+  openModal(
+    `Supprimer le compte de ${a.name} ?`,
+    `Cette action est irréversible. Toutes les données de ${a.name} (opportunités, devis assignés) resteront dans le système mais le compte sera supprimé définitivement.`,
+    'confirm', 'Supprimer définitivement',
+    () => {
+      accounts = accounts.filter(x => x.id !== id);
+      renderAccounts();
+      showToast(`🗑️ Compte supprimé`, 'error');
+    }
+  );
+}
+
+function editAccount(id) {
+  const a = accounts.find(x => x.id === id);
+  const newName = prompt(`Nouveau nom pour ${a.name} :`, a.name);
+  if (newName && newName.trim()) { a.name = newName.trim(); renderAccounts(); showToast('✏️ Nom mis à jour', 'success'); }
+}
+
+/* ====== MODAL ====== */
+function openModal(title, body, btnClass, btnLabel, action) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').textContent = body;
+  const btn = document.getElementById('modalConfirm');
+  btn.className = btnClass;
+  btn.textContent = btnLabel;
+  pendingAction = action;
+  btn.onclick = () => { action(); closeModal(); };
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal() { document.getElementById('overlay').classList.remove('show'); pendingAction = null; }
+
+/* ====== COPIER ====== */
+function copyText(id) {
+  const val = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(val).then(() => showToast('📋 Copié !', 'success'));
+}
+
+/* ====== TOAST ====== */
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type;
+  void t.offsetWidth; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ====== INIT ====== */
+renderAccounts();
+</script>
+</body>
+</html>

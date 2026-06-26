@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesFlow Pro — Analyse de Bon de Commande</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.0/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root{
+    --blue:#1E3A5F; --accent:#2E86C1; --accent2:#48C9B0;
+    --light:#D6E4F0; --bg:#F4F6F9; --card:#FFFFFF; --line:#E2E8F0;
+    --text:#1F2933; --muted:#6B7785;
+    --ok:#1E9E6A; --okbg:#E6F7EF; --warn:#D97706; --warnbg:#FEF3E2;
+    --bad:#DC2626; --badbg:#FDECEC;
+    --shadow:0 1px 3px rgba(30,58,95,.08),0 4px 16px rgba(30,58,95,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+
+  header{background:var(--blue);color:#fff;padding:18px 28px;display:flex;align-items:center;
+    justify-content:space-between;box-shadow:var(--shadow)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;font-weight:800;font-size:18px}
+  .brand h1{font-size:17px;font-weight:700;letter-spacing:.2px}
+  .brand p{font-size:12px;opacity:.7;margin-top:1px}
+  .tag{font-size:11px;background:rgba(255,255,255,.12);padding:5px 11px;border-radius:20px;font-weight:500}
+
+  .wrap{max-width:1280px;margin:24px auto;padding:0 20px;display:grid;
+    grid-template-columns:340px 1fr;gap:20px;align-items:start}
+  @media(max-width:920px){.wrap{grid-template-columns:1fr}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .card-h{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;
+    font-weight:700;font-size:14px;color:var(--blue)}
+  .card-h .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .card-b{padding:18px}
+
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:12px 0 5px}
+  input,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:14px;
+    font-family:inherit;color:var(--text);background:#fff;transition:border .15s}
+  input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,134,193,.12)}
+  input[readonly]{background:#F8FAFC;color:var(--muted)}
+
+  .devis-line{display:grid;grid-template-columns:1fr 60px 90px;gap:8px;align-items:end;margin-bottom:8px}
+  .devis-line label{margin:0 0 4px}
+  .tot{margin-top:14px;padding-top:12px;border-top:2px solid var(--line);display:flex;justify-content:space-between;
+    align-items:center}
+  .tot span:first-child{font-size:13px;color:var(--muted);font-weight:600}
+  .tot span:last-child{font-size:22px;font-weight:800;color:var(--blue)}
+
+  .tabs{display:flex;gap:4px;padding:6px;background:var(--bg);border-radius:10px;margin-bottom:18px}
+  .tab{flex:1;padding:10px;border:none;background:transparent;border-radius:7px;font-weight:600;font-size:13px;
+    color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .tab.on{background:#fff;color:var(--blue);box-shadow:var(--shadow)}
+
+  .pane{display:none}.pane.on{display:block}
+
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:34px 20px;text-align:center;cursor:pointer;
+    transition:.2s;background:#FAFBFC}
+  .drop:hover,.drop.drag{border-color:var(--accent);background:rgba(46,134,193,.04)}
+  .drop .ic{font-size:34px;margin-bottom:8px}
+  .drop b{display:block;color:var(--blue);font-size:14px;margin-bottom:3px}
+  .drop small{color:var(--muted);font-size:12px}
+
+  .ocr-status{margin-top:14px;padding:12px 14px;border-radius:9px;background:var(--light);
+    font-size:13px;color:var(--blue);display:none;align-items:center;gap:10px}
+  .ocr-status.show{display:flex}
+  .spin{width:16px;height:16px;border:2px solid rgba(30,58,95,.2);border-top-color:var(--blue);
+    border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .bar{height:5px;background:rgba(30,58,95,.12);border-radius:3px;overflow:hidden;margin-top:8px;flex:1}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+
+  .ocr-text{margin-top:12px;font-size:11px;background:#1F2933;color:#A7F3D0;padding:12px;border-radius:8px;
+    max-height:130px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,monospace;display:none}
+  .ocr-text.show{display:block}
+
+  .btn{width:100%;padding:13px;border:none;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;
+    font-family:inherit;margin-top:18px;background:linear-gradient(135deg,var(--accent),var(--blue));color:#fff;
+    transition:.15s}
+  .btn:hover{filter:brightness(1.06)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--line)}
+
+  /* verdict */
+  #result{margin-top:20px;display:none}
+  #result.show{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .verdict{border-radius:14px;padding:20px 22px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+  .verdict.ok{background:var(--okbg);border:1px solid #B7E4CE}
+  .verdict.warn{background:var(--warnbg);border:1px solid #FBD9A5}
+  .verdict.bad{background:var(--badbg);border:1px solid #F5C0C0}
+  .v-ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:24px;flex-shrink:0;color:#fff}
+  .verdict.ok .v-ic{background:var(--ok)}.verdict.warn .v-ic{background:var(--warn)}.verdict.bad .v-ic{background:var(--bad)}
+  .v-txt h3{font-size:17px;font-weight:800;margin-bottom:2px}
+  .verdict.ok h3{color:var(--ok)}.verdict.warn h3{color:var(--warn)}.verdict.bad h3{color:var(--bad)}
+  .v-txt p{font-size:13px;color:var(--muted)}
+
+  .checks{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .check{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  .check:last-child{border-bottom:none}
+  .c-ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;flex-shrink:0;font-weight:700}
+  .c-ic.ok{background:var(--ok)}.c-ic.warn{background:var(--warn)}.c-ic.bad{background:var(--bad)}
+  .c-body b{display:block;color:var(--text);margin-bottom:1px}
+  .c-body span{color:var(--muted)}
+
+  .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .acts .btn{margin-top:0}
+  .btn.accept{background:linear-gradient(135deg,var(--ok),#13784f)}
+  .btn.reject{background:linear-gradient(135deg,#EF5350,var(--bad))}
+
+  .hint{font-size:12px;color:var(--muted);background:var(--light);padding:10px 13px;border-radius:8px;margin-top:14px;
+    border-left:3px solid var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">SF</div>
+    <div><h1>SalesFlow Pro</h1><p>Analyse de Bon de Commande</p></div>
+  </div>
+  <span class="tag">Module · Devis &amp; Contrats</span>
+</header>
+
+<div class="wrap">
+
+  <!-- COLONNE GAUCHE : DEVIS DE RÉFÉRENCE -->
+  <aside class="card">
+    <div class="card-h"><span class="dot"></span>Devis de référence</div>
+    <div class="card-b">
+      <label>N° du devis</label>
+      <input id="dRef" value="DEV-2026-001">
+      <label>Client</label>
+      <input id="dClient" value="TechNova Solutions">
+
+      <label style="margin-top:16px">Lignes du devis</label>
+      <div id="dLines"></div>
+      <button class="btn ghost" style="margin-top:8px;padding:8px;font-size:13px" onclick="addLine()">+ Ajouter une ligne</button>
+
+      <div class="tot"><span>TOTAL DEVIS (HT)</span><span id="dTotal">0 €</span></div>
+      <div class="hint">C'est le devis que tu as déjà envoyé et validé. L'appli comparera le bon de commande à <b>ce</b> document.</div>
+    </div>
+  </aside>
+
+  <!-- COLONNE DROITE : BON DE COMMANDE -->
+  <main>
+    <div class="card">
+      <div class="card-h"><span class="dot"></span>Bon de commande reçu</div>
+      <div class="card-b">
+
+        <div class="tabs">
+          <button class="tab on" onclick="tab('manual')">✍️ Saisie manuelle</button>
+          <button class="tab" onclick="tab('ocr')">📄 Upload PDF / image (OCR)</button>
+        </div>
+
+        <!-- SAISIE MANUELLE -->
+        <div class="pane on" id="pane-manual">
+          <label>N° du bon de commande</label>
+          <input id="bcRef" placeholder="ex : BC-2026-0457">
+          <label>Client (tel qu'indiqué sur le BC)</label>
+          <input id="bcClient" placeholder="ex : TechNova Solutions">
+          <label>Montant total commandé (HT, €)</label>
+          <input id="bcTotal" type="number" placeholder="ex : 8400">
+          <label>Bon de commande signé / cacheté ?</label>
+          <select id="bcSigned"><option value="oui">Oui</option><option value="non">Non</option></select>
+        </div>
+
+        <!-- OCR -->
+        <div class="pane" id="pane-ocr">
+          <div class="drop" id="drop">
+            <div class="ic">📥</div>
+            <b>Glisse le bon de commande ici</b>
+            <small>PDF ou image (JPG, PNG) · lecture automatique du texte</small>
+            <input type="file" id="file" accept=".pdf,image/*" hidden>
+          </div>
+          <div class="ocr-status" id="ocrStatus">
+            <div class="spin"></div>
+            <div style="flex:1"><span id="ocrMsg">Lecture en cours…</span>
+              <div class="bar"><i id="ocrBar"></i></div></div>
+          </div>
+          <div class="ocr-text" id="ocrText"></div>
+          <div class="hint">L'OCR extrait le n°, le montant et le client automatiquement. Vérifie toujours les champs avant de valider — un scan flou peut donner des erreurs.</div>
+        </div>
+
+        <button class="btn" id="analyzeBtn" onclick="analyze()">🔍 Analyser le bon de commande</button>
+      </div>
+    </div>
+
+    <!-- RÉSULTAT -->
+    <div id="result">
+      <div class="card">
+        <div class="card-h"><span class="dot"></span>Résultat de l'analyse</div>
+        <div class="card-b">
+          <div class="verdict" id="verdict"><div class="v-ic" id="vIc"></div>
+            <div class="v-txt"><h3 id="vTitle"></h3><p id="vSub"></p></div></div>
+          <div class="checks" id="checks"></div>
+          <div class="acts">
+            <button class="btn reject" onclick="decide(false)">✕ Refuser le BC</button>
+            <button class="btn accept" id="acceptBtn" onclick="decide(true)">✓ Valider &amp; passer à la facture</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ---------- Devis de référence (démo, modifiable) ---------- */
+let devis=[
+  {label:'Audit cybersécurité',qty:1,price:3500},
+  {label:'Développement portail web',qty:1,price:4900}
+];
+
+function renderLines(){
+  const c=document.getElementById('dLines');c.innerHTML='';
+  devis.forEach((l,i)=>{
+    const row=document.createElement('div');row.className='devis-line';
+    row.innerHTML=`<div><label>Service</label><input value="${l.label}" oninput="upd(${i},'label',this.value)"></div>
+      <div><label>Qté</label><input type="number" value="${l.qty}" oninput="upd(${i},'qty',this.value)"></div>
+      <div><label>P.U. €</label><input type="number" value="${l.price}" oninput="upd(${i},'price',this.value)"></div>`;
+    c.appendChild(row);
+  });
+  total();
+}
+function upd(i,k,v){devis[i][k]=(k==='label')?v:parseFloat(v)||0;total();}
+function addLine(){devis.push({label:'',qty:1,price:0});renderLines();}
+function devisTotal(){return devis.reduce((s,l)=>s+l.qty*l.price,0);}
+function total(){document.getElementById('dTotal').textContent=fmt(devisTotal());}
+function fmt(n){return new Intl.NumberFormat('fr-FR').format(n)+' €';}
+
+/* ---------- Onglets ---------- */
+function tab(t){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',(t==='manual')?i===0:i===1));
+  document.getElementById('pane-manual').classList.toggle('on',t==='manual');
+  document.getElementById('pane-ocr').classList.toggle('on',t==='ocr');
+}
+
+/* ---------- OCR ---------- */
+const drop=document.getElementById('drop'),fileIn=document.getElementById('file');
+drop.onclick=()=>fileIn.click();
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('drag');};
+drop.ondragleave=()=>drop.classList.remove('drag');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);};
+fileIn.onchange=e=>{if(e.target.files[0])handleFile(e.target.files[0]);};
+
+function ocrUI(show,msg,pct){
+  document.getElementById('ocrStatus').classList.toggle('show',show);
+  if(msg)document.getElementById('ocrMsg').textContent=msg;
+  if(pct!=null)document.getElementById('ocrBar').style.width=pct+'%';
+}
+
+async function handleFile(f){
+  ocrUI(true,'Préparation…',5);
+  document.getElementById('ocrText').classList.remove('show');
+  try{
+    let text='';
+    if(f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf')){
+      text=await ocrPdf(f);
+    }else{
+      text=await ocrImage(URL.createObjectURL(f));
+    }
+    ocrUI(false);
+    showOcrText(text);
+    extract(text);
+    tab('manual'); // bascule sur les champs remplis pour vérif
+  }catch(err){
+    ocrUI(false);
+    alert('Lecture impossible : '+err.message+'\nSaisis les infos manuellement.');
+  }
+}
+
+async function ocrPdf(f){
+  const buf=await f.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  let all='';
+  for(let p=1;p<=Math.min(pdf.numPages,3);p++){
+    ocrUI(true,`Page ${p}/${Math.min(pdf.numPages,3)}…`,10);
+    const page=await pdf.getPage(p);
+    // 1) tente l'extraction texte directe (PDF natif, instantané)
+    const tc=await page.getTextContent();
+    const direct=tc.items.map(i=>i.str).join(' ');
+    if(direct.trim().length>40){all+=direct+'\n';continue;}
+    // 2) sinon OCR sur le rendu de la page (PDF scanné)
+    const vp=page.getViewport({scale:2});
+    const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
+    await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    all+=await ocrImage(cv.toDataURL())+'\n';
+  }
+  return all;
+}
+
+async function ocrImage(src){
+  const r=await Tesseract.recognize(src,'fra',{logger:m=>{
+    if(m.status==='recognizing text')ocrUI(true,'Lecture du texte…',Math.round(m.progress*100));
+  }});
+  return r.data.text;
+}
+
+function showOcrText(t){
+  const el=document.getElementById('ocrText');
+  el.textContent='Texte extrait :\n\n'+t.slice(0,600);el.classList.add('show');
+}
+
+/* ---------- Extraction des champs depuis le texte OCR ---------- */
+function extract(text){
+  const t=text.replace(/\s+/g,' ');
+  // Référence BC : BC-... / N° ... / Commande ...
+  let ref=(t.match(/(?:BC|B\.C\.|bon de commande|commande|N[°o]?)\s*[:\-#]?\s*([A-Z0-9\-\/]{4,})/i)||[])[1];
+  // Montant : cherche tous les nombres avec € ou "total"
+  let amounts=[...t.matchAll(/(\d[\d\s.,]{2,})\s*(?:€|eur|euros|ht)/gi)].map(m=>parseNum(m[1]));
+  let totalMatch=t.match(/total[^0-9]{0,15}(\d[\d\s.,]{2,})/i);
+  let amount=totalMatch?parseNum(totalMatch[1]):(amounts.length?Math.max(...amounts):null);
+  // Signé ?
+  let signed=/sign[ée]|cachet|tampon|valid[ée]/i.test(t)?'oui':'non';
+
+  if(ref)document.getElementById('bcRef').value=ref;
+  if(amount)document.getElementById('bcTotal').value=amount;
+  document.getElementById('bcSigned').value=signed;
+  document.getElementById('bcClient').value=document.getElementById('dClient').value; // pré-rempli, à vérifier
+}
+function parseNum(s){return parseFloat(s.replace(/\s/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.'))||0;}
+
+/* ---------- Moteur d'analyse ---------- */
+function analyze(){
+  const bcRef=document.getElementById('bcRef').value.trim();
+  const bcClient=document.getElementById('bcClient').value.trim().toLowerCase();
+  const bcTotal=parseFloat(document.getElementById('bcTotal').value)||0;
+  const bcSigned=document.getElementById('bcSigned').value;
+  const dClient=document.getElementById('dClient').value.trim().toLowerCase();
+  const dTotal=devisTotal();
+
+  if(!bcRef||!bcTotal){alert('Renseigne au moins le n° et le montant du bon de commande.');return;}
+
+  const checks=[];
+  let errors=0,warnings=0;
+
+  // 1. Référence présente
+  checks.push({s:bcRef?'ok':'bad',t:'Référence du bon de commande',
+    d:bcRef?`N° ${bcRef} détecté`:'Aucune référence — document non identifiable'});
+  if(!bcRef)errors++;
+
+  // 2. Client
+  const clientOk=bcClient&&dClient&&(bcClient.includes(dClient)||dClient.includes(bcClient));
+  checks.push({s:clientOk?'ok':'warn',t:'Correspondance du client',
+    d:clientOk?'Le client correspond au devis':'Le nom du client diffère du devis — à vérifier'});
+  if(!clientOk)warnings++;
+
+  // 3. Montant
+  const diff=bcTotal-dTotal;
+  const pct=dTotal?Math.abs(diff)/dTotal*100:100;
+  let mS,mD;
+  if(Math.abs(diff)<0.5){mS='ok';mD=`Montant identique au devis (${fmt(dTotal)})`;}
+  else if(pct<=2){mS='warn';mD=`Écart mineur de ${fmt(Math.abs(diff))} (${pct.toFixed(1)}%) — arrondi probable`;warnings++;}
+  else{mS='bad';mD=`Écart de ${fmt(Math.abs(diff))} : BC=${fmt(bcTotal)} vs Devis=${fmt(dTotal)}`;errors++;}
+  checks.push({s:mS,t:'Montant commandé vs devis',d:mD});
+
+  // 4. Signature
+  checks.push({s:bcSigned==='oui'?'ok':'warn',t:'Bon de commande signé / cacheté',
+    d:bcSigned==='oui'?'Document signé — engagement client valable':'Non signé — demande une version signée avant facturation'});
+  if(bcSigned!=='oui')warnings++;
+
+  render(checks,errors,warnings);
+}
+
+function render(checks,errors,warnings){
+  const v=document.getElementById('verdict'),ic=document.getElementById('vIc');
+  let cls,icon,title,sub,canAccept;
+  if(errors>0){cls='bad';icon='✕';title='À ne pas valider';
+    sub=`${errors} écart(s) bloquant(s) détecté(s). Contacte le client avant toute facturation.`;canAccept=false;}
+  else if(warnings>0){cls='warn';icon='!';title='À valider avec prudence';
+    sub=`Conforme dans l'ensemble, mais ${warnings} point(s) à vérifier manuellement.`;canAccept=true;}
+  else{cls='ok';icon='✓';title='Conforme — bon à valider';
+    sub='Le bon de commande correspond parfaitement au devis. Tu peux émettre la facture.';canAccept=true;}
+
+  v.className='verdict '+cls;ic.textContent=icon;
+  document.getElementById('vTitle').textContent=title;
+  document.getElementById('vSub').textContent=sub;
+  document.getElementById('acceptBtn').disabled=!canAccept;
+
+  const box=document.getElementById('checks');box.innerHTML='';
+  checks.forEach(c=>{
+    const sym=c.s==='ok'?'✓':c.s==='warn'?'!':'✕';
+    box.insertAdjacentHTML('beforeend',
+      `<div class="check"><div class="c-ic ${c.s}">${sym}</div>
+       <div class="c-body"><b>${c.t}</b><span>${c.d}</span></div></div>`);
+  });
+  const r=document.getElementById('result');r.classList.add('show');r.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function decide(ok){
+  if(ok)alert('✅ Bon de commande validé.\n\nProchaine étape : génération de la facture liée au devis '+document.getElementById('dRef').value+'.');
+  else alert('✕ Bon de commande refusé.\n\nUn email de demande de correction peut être envoyé au client.');
+}
+
+renderLines();
+</script>
+</body>
+</html>
