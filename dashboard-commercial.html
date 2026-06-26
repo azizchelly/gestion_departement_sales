@@ -200,20 +200,20 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Mon espace</div>
-    <a class="nav-item active" href="#"><span class="nav-ic">📊</span>Mon Dashboard</a>
-    <a class="nav-item" href="#"><span class="nav-ic">🏢</span>Mes Clients</a>
-    <a class="nav-item" href="#"><span class="nav-ic">🔀</span>Mon Pipeline</a>
+    <a class="nav-item active" href="dashboard-commercial.html"><span class="nav-ic">📊</span>Mon Dashboard</a>
+    <a class="nav-item" href="contacts.html"><span class="nav-ic">🏢</span>Mes Clients</a>
+    <a class="nav-item" href="dashboard-commercial.html#pipeline"><span class="nav-ic">🔀</span>Mon Pipeline</a>
 
     <div class="sb-section">Commercial</div>
-    <a class="nav-item" href="#"><span class="nav-ic">📄</span>Mes Devis<span class="nav-badge">2</span></a>
-    <a class="nav-item" href="#"><span class="nav-ic">🧾</span>Mes Factures</a>
+    <a class="nav-item" href="nouveau-devis.html"><span class="nav-ic">📄</span>Mes Devis<span class="nav-badge">2</span></a>
+    <a class="nav-item" href="facture-preview.html"><span class="nav-ic">🧾</span>Mes Factures</a>
     <a class="nav-item" href="#"><span class="nav-ic">📑</span>Mes Contrats</a>
 
     <div class="sb-section">Catalogue</div>
-    <a class="nav-item" href="#"><span class="nav-ic">📦</span>Services & Tarifs</a>
+    <a class="nav-item" href="contacts.html"><span class="nav-ic">📦</span>Services & Tarifs</a>
   </nav>
   <div class="sb-foot">
-    <button class="logout-btn" onclick="showToast('Déconnexion…','info')">
+    <button class="logout-btn" onclick="window.location.href='login.html'">
       <span style="font-size:16px">🚪</span> Se déconnecter
     </button>
   </div>
@@ -227,8 +227,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
       <p>Jeudi 25 juin 2026 · Mon portefeuille</p>
     </div>
     <div class="topbar-right">
-      <button class="tb-btn ghost" onclick="showToast('Catalogue des services ouvert','info')">📦 Catalogue</button>
-      <button class="tb-btn primary" onclick="showToast('Nouveau devis en cours de création…','info')">＋ Nouveau devis</button>
+      <button class="tb-btn ghost" onclick="window.location.href='contacts.html'">📦 Catalogue</button>
+      <button class="tb-btn primary" onclick="window.location.href='nouveau-devis.html'">＋ Nouveau devis</button>
       <div class="notif-btn" onclick="showToast('1 notification non lue','warn')">🔔<div class="notif-dot"></div></div>
     </div>
   </div>
@@ -244,8 +244,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
     <div class="obj-banner">
       <div class="obj-left">
         <h3>Mon objectif · Juin 2026</h3>
-        <div class="obj-num">38 400 €</div>
-        <div class="obj-sub">réalisés sur 60 000 € d'objectif</div>
+        <div class="obj-num">38 400 DT</div>
+        <div class="obj-sub">réalisés sur 60 000 DT d'objectif</div>
       </div>
       <div class="obj-bar-wrap">
         <div class="obj-bar-label"><span>Progression</span><b id="pctLabel">64%</b></div>
@@ -256,15 +256,15 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 
     <!-- ACTIONS RAPIDES -->
     <div class="quick-actions">
-      <button class="qa-btn" onclick="showToast('Création d\'un nouveau devis…','info')">
+      <button class="qa-btn" onclick="window.location.href='nouveau-devis.html'">
         <div class="qa-ic green">📄</div>
         <div class="qa-txt"><b>Nouveau devis</b><span>Avec remise possible</span></div>
       </button>
-      <button class="qa-btn" onclick="genFacture()">
+      <button class="qa-btn" onclick="window.location.href='facture-preview.html'">
         <div class="qa-ic blue">🧾</div>
         <div class="qa-txt"><b>Générer facture</b><span>Depuis un devis accepté</span></div>
       </button>
-      <button class="qa-btn" onclick="showToast('⚠️ Le prix unitaire des services est fixé par l\'Admin','warn')">
+      <button class="qa-btn" onclick="window.location.href='contacts.html'">
         <div class="qa-ic amber">📦</div>
         <div class="qa-txt"><b>Voir catalogue</b><span>Prix fixés par l'Admin</span></div>
       </button>
@@ -275,7 +275,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
       <div class="kpi green">
         <div class="kpi-icon">💰</div>
         <div class="kpi-label">Mon CA (juin)</div>
-        <div class="kpi-val">38 400 €</div>
+        <div class="kpi-val">38 400 DT</div>
         <div class="kpi-sub"><span class="kpi-delta up">↑ +12%</span> vs mai</div>
       </div>
       <div class="kpi blue">
@@ -311,10 +311,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
             <a class="card-link" href="#">Voir en détail →</a>
           </div>
           <div class="mini-pipeline">
-            <div class="mp-col"><div class="mp-label">Lead</div><div class="mp-num">2</div><div class="mp-amount">20 500 €</div></div>
-            <div class="mp-col"><div class="mp-label">Qualifié</div><div class="mp-num">2</div><div class="mp-amount">30 000 €</div></div>
-            <div class="mp-col"><div class="mp-label">Gagné</div><div class="mp-num" style="color:var(--ok)">3</div><div class="mp-amount" style="color:var(--ok)">71 000 €</div></div>
-            <div class="mp-col"><div class="mp-label">Perdu</div><div class="mp-num" style="color:var(--bad)">1</div><div class="mp-amount" style="color:var(--bad)">9 000 €</div></div>
+            <div class="mp-col"><div class="mp-label">Lead</div><div class="mp-num">2</div><div class="mp-amount">20 500 DT</div></div>
+            <div class="mp-col"><div class="mp-label">Qualifié</div><div class="mp-num">2</div><div class="mp-amount">30 000 DT</div></div>
+            <div class="mp-col"><div class="mp-label">Gagné</div><div class="mp-num" style="color:var(--ok)">3</div><div class="mp-amount" style="color:var(--ok)">71 000 DT</div></div>
+            <div class="mp-col"><div class="mp-label">Perdu</div><div class="mp-num" style="color:var(--bad)">1</div><div class="mp-amount" style="color:var(--bad)">9 000 DT</div></div>
           </div>
         </div>
 
@@ -333,40 +333,40 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
                 <tr>
                   <td><span class="dv-ref">DEV-2026-007</span></td>
                   <td>DataCore</td>
-                  <td class="dv-amount">35 000 € <span class="remise-tag">-5%</span></td>
+                  <td class="dv-amount">35 000 DT <span class="remise-tag">-5%</span></td>
                   <td><span class="dv-status accepted">✅ Accepté</span></td>
                   <td><div class="dv-actions">
-                    <button class="ic-btn gen" title="Générer facture" onclick="showToast('✅ Facture FACT-2026-007 générée depuis DEV-2026-007 !','success')">🧾</button>
-                    <button class="ic-btn" title="Modifier remise" onclick="modifierRemise()">✏️</button>
+                    <button class="ic-btn gen" title="Générer facture" onclick="window.location.href='facture-preview.html'">🧾</button>
+                    <button class="ic-btn" title="Modifier remise" onclick="window.location.href='nouveau-devis.html'">✏️</button>
                   </div></td>
                 </tr>
                 <tr>
                   <td><span class="dv-ref">DEV-2026-009</span></td>
                   <td>FinTech TN</td>
-                  <td class="dv-amount">18 000 €</td>
+                  <td class="dv-amount">18 000 DT</td>
                   <td><span class="dv-status sent">📤 Envoyé</span></td>
                   <td><div class="dv-actions">
-                    <button class="ic-btn" title="Modifier remise" onclick="modifierRemise()">✏️</button>
-                    <button class="ic-btn" title="Relancer" onclick="showToast('Email de relance envoyé à FinTech TN','info')">📧</button>
+                    <button class="ic-btn" title="Modifier remise" onclick="window.location.href='nouveau-devis.html'">✏️</button>
+                    <button class="ic-btn" title="Relancer" onclick="showToast('Email de relance envoyé','info')">📧</button>
                   </div></td>
                 </tr>
                 <tr>
                   <td><span class="dv-ref">DEV-2026-011</span></td>
                   <td>SudTech SARL</td>
-                  <td class="dv-amount">12 000 € <span class="remise-tag">-10%</span></td>
+                  <td class="dv-amount">12 000 DT <span class="remise-tag">-10%</span></td>
                   <td><span class="dv-status late">⏱ +5 jours</span></td>
                   <td><div class="dv-actions">
-                    <button class="ic-btn" title="Modifier remise" onclick="modifierRemise()">✏️</button>
+                    <button class="ic-btn" title="Modifier remise" onclick="window.location.href='nouveau-devis.html'">✏️</button>
                     <button class="ic-btn" title="Relancer" onclick="showToast('Email de relance envoyé','info')">📧</button>
                   </div></td>
                 </tr>
                 <tr>
                   <td><span class="dv-ref">DEV-2026-012</span></td>
                   <td>MediaPlus</td>
-                  <td class="dv-amount">8 500 €</td>
+                  <td class="dv-amount">8 500 DT</td>
                   <td><span class="dv-status draft">📝 Brouillon</span></td>
                   <td><div class="dv-actions">
-                    <button class="ic-btn" title="Modifier" onclick="modifierRemise()">✏️</button>
+                    <button class="ic-btn" title="Modifier" onclick="window.location.href='nouveau-devis.html'">✏️</button>
                   </div></td>
                 </tr>
               </tbody>
@@ -389,22 +389,22 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
             <div class="client-item" onclick="showToast('Fiche DataCore ouverte','info')">
               <div class="cl-avatar">D</div>
               <div class="cl-info"><div class="cl-name">DataCore</div><div class="cl-sector">Éditeur logiciel</div></div>
-              <div class="cl-ca">35 000 €</div>
+              <div class="cl-ca">35 000 DT</div>
             </div>
             <div class="client-item" onclick="showToast('Fiche FinTech TN ouverte','info')">
               <div class="cl-avatar" style="background:linear-gradient(135deg,var(--violet),#7C3AED)">F</div>
               <div class="cl-info"><div class="cl-name">FinTech TN</div><div class="cl-sector">Services financiers</div></div>
-              <div class="cl-ca">18 000 €</div>
+              <div class="cl-ca">18 000 DT</div>
             </div>
             <div class="client-item" onclick="showToast('Fiche SudTech ouverte','info')">
               <div class="cl-avatar" style="background:linear-gradient(135deg,var(--emerald),#1A9E80)">S</div>
               <div class="cl-info"><div class="cl-name">SudTech SARL</div><div class="cl-sector">Industrie IT</div></div>
-              <div class="cl-ca">12 000 €</div>
+              <div class="cl-ca">12 000 DT</div>
             </div>
             <div class="client-item" onclick="showToast('Fiche MediaPlus ouverte','info')">
               <div class="cl-avatar" style="background:linear-gradient(135deg,var(--amber),#D97706)">M</div>
               <div class="cl-info"><div class="cl-name">MediaPlus</div><div class="cl-sector">Médias & Digital</div></div>
-              <div class="cl-ca">8 500 €</div>
+              <div class="cl-ca">8 500 DT</div>
             </div>
           </div>
         </div>
@@ -446,7 +446,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
     <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Tu peux appliquer une remise commerciale. Le prix unitaire des services reste fixé par l'Admin.</p>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:block">Prix avant remise (HT)</label>
-      <div style="padding:12px 14px;background:var(--bg);border:1px solid var(--line);border-radius:9px;font-size:16px;font-weight:700;color:var(--muted)">35 000 €</div>
+      <div style="padding:12px 14px;background:var(--bg);border:1px solid var(--line);border-radius:9px;font-size:16px;font-weight:700;color:var(--muted)">35 000 DT</div>
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:block">Remise commerciale (%)</label>
@@ -456,10 +456,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
       <div style="font-size:11px;color:var(--muted);margin-top:5px">Max. 40% · Le prix unitaire ne peut être modifié que par l'Admin</div>
     </div>
     <div style="background:linear-gradient(135deg,rgba(72,201,176,.08),rgba(72,201,176,.03));border:1px solid rgba(72,201,176,.25);border-radius:10px;padding:14px;margin-bottom:20px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="color:var(--muted)">Prix avant remise</span><span style="font-weight:600">35 000 €</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="color:var(--amber);font-weight:600">Remise (<span id="remisePct">5</span>%)</span><span style="color:var(--amber);font-weight:700">- <span id="remiseMontant">1 750</span> €</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="color:var(--muted)">Prix avant remise</span><span style="font-weight:600">35 000 DT</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="color:var(--amber);font-weight:600">Remise (<span id="remisePct">5</span>%)</span><span style="color:var(--amber);font-weight:700">- <span id="remiseMontant">1 750</span> DT</span></div>
       <div style="height:1px;background:rgba(72,201,176,.2);margin:8px 0"></div>
-      <div style="display:flex;justify-content:space-between;font-size:15px"><span style="font-weight:700;color:var(--brand)">Prix après remise</span><span style="font-weight:800;color:var(--ok);font-size:17px" id="remiseFinal">33 250 €</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px"><span style="font-weight:700;color:var(--brand)">Prix après remise</span><span style="font-weight:800;color:var(--ok);font-size:17px" id="remiseFinal">33 250 DT</span></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button onclick="closeRemise()" style="padding:12px;border-radius:9px;background:var(--line);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text)">Annuler</button>
@@ -500,7 +500,7 @@ function calcRemise() {
   const final = base - remise;
   document.getElementById('remisePct').textContent = pct;
   document.getElementById('remiseMontant').textContent = new Intl.NumberFormat('fr-FR').format(remise);
-  document.getElementById('remiseFinal').textContent = new Intl.NumberFormat('fr-FR').format(final) + ' €';
+  document.getElementById('remiseFinal').textContent = new Intl.NumberFormat('fr-FR').format(final) + ' DT';
 }
 function saveRemise() {
   const pct = document.getElementById('remiseInput').value;
