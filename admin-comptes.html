@@ -503,7 +503,7 @@ renderAccounts();
   nav.innerHTML =
     '<span style="'+SEC+'">PRINCIPAL</span>' +
     a(dash, '&#128202;', 'Dashboard') +
-    a('contacts.html', '&#128101;', isAdmin ? 'Contacts' : 'Mes Clients') +
+        (isAdmin ? a('contacts.html', '&#128101;', 'Contacts') : '') +
     '<span style="'+SEC+'">COMMERCIAL</span>' +
     a('nouveau-devis.html', '&#128196;', isAdmin ? 'Devis' : 'Mes Devis') +
     a('facture-preview.html', '&#129534;', isAdmin ? 'Factures' : 'Mes Factures') +
