@@ -1,6 +1,62 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script>
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+
+async function sbGet(table, filters) {
+  let url = SB_URL + "/rest/v1/" + table + "?order=id.asc";
+  if (filters) url += "&" + filters;
+  const r = await fetch(url, {
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+async function sbInsert(table, data) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table, {
+    method: "POST",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json", "Prefer": "return=representation"},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+async function sbUpdate(table, id, data) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method: "PATCH",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+async function sbDelete(table, id) {
+  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method: "DELETE",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+async function sbAuth(email, password) {
+  const r = await fetch(SB_URL + "/auth/v1/token?grant_type=password", {
+    method: "POST",
+    headers: {"apikey": SB_KEY, "Content-Type": "application/json"},
+    body: JSON.stringify({ email, password })
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error_description || d.msg || "Erreur auth");
+  return d;
+}
+
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SalesFlow Pro — Connexion</title>
@@ -143,16 +199,6 @@ body.role-commercial .mobile-logo h2 span{color:var(--emerald)}
 .toast.error{background:linear-gradient(135deg,#DC2626,#991B1B)}
 .toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
-<script>
-const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
-const sb = supabase.createClient(SB_URL, SB_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true },
-  realtime: { params: { eventsPerSecond: 10 } },
-  global: { fetch: fetch.bind(globalThis) }
-});
-</script>
 </head>
 <body>
 
@@ -451,9 +497,11 @@ async function login() {
 
   try {
     // Connexion via Supabase Auth
-    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    let data = null, error = null;
+    try { data = await sbAuth(email, pass); }
+    catch(e) { error = e; }
 
-    if (error) {
+    if (error || !data) {
       // Fallback comptes demo si Supabase échoue
       const DEMO = [
         { email:'admin@salesflow.tn',      password:'Admin2026!',  role:'admin',      name:'Sales Manager' },
@@ -475,13 +523,13 @@ async function login() {
     }
 
     // Récupérer le rôle depuis les métadonnées ou la table profiles
-    const role = data.user?.user_metadata?.role || currentRole;
-    const name = data.user?.user_metadata?.full_name || data.user?.email?.split('@')[0] || 'Utilisateur';
+    const role = (data.user && data.user.user_metadata && data.user.user_metadata.role) ? data.user.user_metadata.role : currentRole;
+    const name = (data.user && data.user.user_metadata && data.user.user_metadata.full_name) ? data.user.user_metadata.full_name : (data.user ? data.user.email.split('@')[0] : 'Utilisateur');
 
     localStorage.setItem('sf_role', role);
     localStorage.setItem('sf_user', name);
     localStorage.setItem('sf_email', email);
-    localStorage.setItem('sf_token', data.session?.access_token || '');
+    localStorage.setItem('sf_token', (data.access_token || ''));
 
     btn.classList.remove('loading'); btn.disabled = false;
     showToast("✅ Bienvenue, " + name + " !", 'success');
@@ -541,10 +589,7 @@ async function sendAdminReset() {
   errEl.classList.remove('show');
   if (!email || !/^[^@]+@[^@]+[.][^@]+$/.test(email)) { errEl.classList.add('show'); return; }
   try {
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/login.html'
-    });
-    if (error) throw error;
+    await sbResetPassword(email);
     showToast('📧 Lien de réinitialisation envoyé à ' + email, 'success');
     setTimeout(() => {
       document.getElementById('admin-step1').style.display = 'none';
