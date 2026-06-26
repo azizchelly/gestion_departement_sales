@@ -3,188 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SalesFlow Pro — Dashboard Admin</title>
+<title>SalesFlow Pro — Dashboard Commercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --brand:#1E3A5F;--accent:#2E86C1;--emerald:#48C9B0;
-  --violet:#7C3AED;--amber:#D97706;--ok:#1E9E6A;--bad:#DC2626;
-  --bg:#F0F3F8;--card:#fff;--text:#1F2933;--muted:#6B7785;--line:#E2E8F0;
+  --brand:#1E3A5F;--accent:#2E86C1;--accent-rgb:46,134,193;
+  --emerald:#48C9B0;--emerald-rgb:72,201,176;
+  --violet:#7C3AED;--amber:#D97706;
+  --bg:#F0F3F8;--card:#FFFFFF;--text:#1F2933;--muted:#6B7785;
+  --line:#E2E8F0;--ok:#1E9E6A;--bad:#DC2626;
   --shadow:0 1px 3px rgba(30,58,95,.07),0 4px 20px rgba(30,58,95,.06);
-  --sb:240px;
+  --sidebar:240px;
 }
-html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 /* SIDEBAR */
-.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sb);background:var(--brand);display:flex;flex-direction:column;z-index:100;box-shadow:2px 0 16px rgba(30,58,95,.15)}
-.sb-head{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:linear-gradient(180deg,#1A3352 0%,#1E3A5F 100%);display:flex;flex-direction:column;z-index:100}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
 .sb-logo{display:flex;align-items:center;gap:10px}
-.logo-ic{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--emerald));display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff;flex-shrink:0}
-.logo-txt{font-size:15px;font-weight:800;color:#fff}
+.logo-ic{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--emerald),#2ECC9A);display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0}
+.logo-txt{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
 .logo-txt span{color:var(--emerald)}
-.sb-user{margin:12px 14px 0;padding:10px 12px;background:rgba(255,255,255,.07);border-radius:10px;display:flex;align-items:center;gap:10px}
-.sb-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--brand));display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
-.sb-name{font-size:13px;font-weight:700;color:#fff}
-.sb-role{font-size:10px;color:var(--emerald);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
-.sb-nav{flex:1;padding:14px 8px;overflow-y:auto}
-.sb-sec{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin:14px 0 5px}
-.sb-sec:first-child{margin-top:0}
-.nav-a{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;text-decoration:none;margin-bottom:2px;transition:.15s;position:relative}
-.nav-a:hover{background:rgba(255,255,255,.08);color:#fff}
-.nav-a.active{background:rgba(46,134,193,.28);color:#fff;font-weight:700}
-.nav-a.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+
+.sb-user{margin:14px 18px 0;padding:12px;background:rgba(255,255,255,.06);border-radius:10px;display:flex;align-items:center;gap:10px}
+.sb-avatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--emerald),#1A9E80);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.sb-user-name{font-size:13px;font-weight:700;color:#fff}
+.sb-user-role{font-size:10px;color:var(--emerald);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+
+.sb-nav{flex:1;padding:16px 10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin:16px 0 6px}
+.sb-section:first-child{margin-top:0}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:.15s;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;position:relative;text-decoration:none;margin-bottom:2px}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(72,201,176,.18);color:#fff;font-weight:600}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--emerald)}
 .nav-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .nav-badge{margin-left:auto;background:var(--bad);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
-.nav-badge.g{background:var(--ok)}
-.sb-foot{padding:12px 8px;border-top:1px solid rgba(255,255,255,.08)}
-.logout{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.45);font-size:13px;width:100%;background:none;border:none;font-family:inherit;transition:.15s}
-.logout:hover{background:rgba(220,38,38,.15);color:#fca5a5}
+
+.sb-foot{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;transition:.15s;width:100%;background:none;border:none;font-family:'Inter',sans-serif}
+.logout-btn:hover{background:rgba(220,38,38,.15);color:#FCA5A5}
 
 /* MAIN */
-.main{margin-left:var(--sb);min-height:100vh;display:flex;flex-direction:column}
-.topbar{background:var(--card);border-bottom:1px solid var(--line);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(30,58,95,.06)}
-.topbar-l h1{font-size:17px;font-weight:800;color:var(--brand);letter-spacing:-.3px}
-.topbar-l p{font-size:11px;color:var(--muted);margin-top:1px}
-.topbar-r{display:flex;align-items:center;gap:8px}
-.tbtn{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:.15s}
-.tbtn.ghost{background:var(--bg);color:var(--brand);border:1px solid var(--line)}
-.tbtn.ghost:hover{border-color:var(--accent);color:var(--accent)}
-.tbtn.primary{background:linear-gradient(135deg,var(--accent),var(--brand));color:#fff;box-shadow:0 2px 8px rgba(46,134,193,.3)}
-.tbtn.primary:hover{filter:brightness(1.07)}
-.notif{width:34px;height:34px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;font-size:15px;position:relative}
-.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--bad);border:2px solid var(--card)}
+.main{margin-left:var(--sidebar);min-height:100vh;display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--line);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left h1{font-size:18px;font-weight:800;color:var(--brand);letter-spacing:-.3px}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-btn{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:.15s;border:none}
+.tb-btn.ghost{background:var(--bg);color:var(--brand);border:1px solid var(--line)}
+.tb-btn.ghost:hover{border-color:var(--emerald);color:var(--emerald)}
+.tb-btn.primary{background:linear-gradient(135deg,var(--emerald),#1A9E80);color:#fff;box-shadow:0 2px 8px rgba(var(--emerald-rgb),.35)}
+.tb-btn.primary:hover{filter:brightness(1.07)}
+.notif-btn{width:36px;height:36px;border-radius:9px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;font-size:16px;position:relative;transition:.15s}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--bad);border:2px solid var(--card)}
 
 /* CONTENT */
-.content{padding:22px 24px;flex:1}
+.content{padding:24px 28px;flex:1}
 
-/* FLUX STEPS */
-.flux-banner{background:linear-gradient(135deg,var(--brand),#2A5080);border-radius:14px;padding:18px 22px;margin-bottom:22px;box-shadow:0 4px 20px rgba(30,58,95,.2)}
-.flux-title{font-size:12px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
-.flux-steps{display:flex;align-items:center;gap:0}
-.flux-step{display:flex;align-items:center;gap:8px;cursor:pointer;transition:.2s;flex:1}
-.flux-step:hover .fs-box{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
-.fs-box{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;text-align:center;transition:.2s;min-width:100px}
-.fs-box.done{background:rgba(30,158,106,.25);border-color:rgba(72,201,176,.4)}
-.fs-box.active{background:rgba(46,134,193,.35);border-color:rgba(72,201,176,.6);box-shadow:0 0 0 2px rgba(72,201,176,.3)}
-.fs-num{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
-.fs-label{font-size:12px;font-weight:700;color:#fff}
-.fs-sub{font-size:9px;color:rgba(255,255,255,.5);margin-top:2px}
-.flux-arrow{color:rgba(255,255,255,.3);font-size:18px;font-weight:300;margin:0 6px;flex-shrink:0}
+/* OBJECTIF BARRE */
+.obj-banner{background:linear-gradient(135deg,var(--brand),#2A5080);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#fff;box-shadow:0 4px 20px rgba(30,58,95,.2)}
+.obj-left h3{font-size:13px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.obj-left .obj-num{font-size:32px;font-weight:800;letter-spacing:-1px}
+.obj-left .obj-sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
+.obj-bar-wrap{flex:1;max-width:360px}
+.obj-bar-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.6);margin-bottom:8px}
+.obj-bar-label b{color:#fff}
+.obj-bar-bg{height:10px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden}
+.obj-bar-fill{height:100%;background:linear-gradient(90deg,var(--emerald),#2ECC9A);border-radius:5px;width:0;transition:width 1s ease}
+.obj-pct{font-size:28px;font-weight:800;color:var(--emerald);min-width:60px;text-align:right}
 
 /* ACTIONS RAPIDES */
-.qa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px}
-.qa-btn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 12px;cursor:pointer;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--shadow);font-family:inherit;text-decoration:none}
-.qa-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(30,58,95,.1);border-color:var(--accent)}
-.qa-ic{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:20px}
-.qa-ic.blue{background:rgba(46,134,193,.12)}
-.qa-ic.green{background:rgba(72,201,176,.12)}
-.qa-ic.violet{background:rgba(124,58,237,.1)}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.qa-btn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 14px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);font-family:'Inter',sans-serif}
+.qa-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(30,58,95,.1);border-color:var(--emerald)}
+.qa-ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.qa-ic.green{background:rgba(var(--emerald-rgb),.12)}
+.qa-ic.blue{background:rgba(var(--accent-rgb),.1)}
 .qa-ic.amber{background:rgba(217,119,6,.1)}
-.qa-ic.red{background:rgba(220,38,38,.08)}
-.qa-label{font-size:12px;font-weight:700;color:var(--brand);text-align:center}
-.qa-sub{font-size:10px;color:var(--muted);text-align:center}
+.qa-txt b{display:block;font-size:13px;font-weight:700;color:var(--brand)}
+.qa-txt span{font-size:11px;color:var(--muted)}
 
 /* KPIs */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.kpi.blue::after{background:linear-gradient(90deg,var(--accent),#63B3ED)}
 .kpi.green::after{background:linear-gradient(90deg,var(--ok),var(--emerald))}
+.kpi.blue::after{background:linear-gradient(90deg,var(--accent),#63B3ED)}
 .kpi.violet::after{background:linear-gradient(90deg,var(--violet),#A78BFA)}
 .kpi.amber::after{background:linear-gradient(90deg,var(--amber),#FCD34D)}
-.kpi-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.kpi-val{font-size:26px;font-weight:800;color:var(--brand);letter-spacing:-1px;line-height:1}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:4px}
-.delta{font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px}
-.delta.up{background:#E6F7EF;color:var(--ok)}
-.delta.dn{background:#FDECEC;color:var(--bad)}
-.kpi-icon{position:absolute;right:14px;top:14px;font-size:20px;opacity:.12}
+.kpi-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.kpi-val{font-size:28px;font-weight:800;color:var(--brand);letter-spacing:-1px;line-height:1}
+.kpi-sub{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:5px}
+.kpi-delta{font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px}
+.kpi-delta.up{background:#E6F7EF;color:var(--ok)}
+.kpi-delta.down{background:#FDECEC;color:var(--bad)}
+.kpi-icon{position:absolute;right:16px;top:16px;font-size:22px;opacity:.15}
 
-/* GRILLE PRINCIPALE */
-.main-grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
 
 /* CARD */
-.card{background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
-.card:last-child{margin-bottom:0}
-.card-h{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.card-h-l{display:flex;align-items:center;gap:7px}
-.cdot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
-.card-h h2{font-size:13px;font-weight:700;color:var(--brand)}
-.card-link{font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;text-decoration:none}
-.card-link:hover{color:var(--brand)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.card-h{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.card-h-left{display:flex;align-items:center;gap:8px}
+.card-h-left .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald)}
+.card-h-left h2{font-size:14px;font-weight:700;color:var(--brand)}
+.card-link{font-size:12px;font-weight:600;color:var(--emerald);cursor:pointer;text-decoration:none}
 
-/* DEVIS TABLE */
-.dv-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.dv-tbl th{text-align:left;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:0 14px 8px;border-bottom:2px solid var(--line)}
-.dv-tbl td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
-.dv-tbl tr:last-child td{border-bottom:none}
-.dv-tbl tr:hover td{background:#FAFBFC}
+/* PIPELINE SIMPLIFIÉ */
+.mini-pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px}
+.mp-col{text-align:center}
+.mp-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.mp-num{font-size:22px;font-weight:800;color:var(--brand)}
+.mp-amount{font-size:11px;color:var(--muted);margin-top:3px}
+.mp-divider{width:1px;background:var(--line)}
+
+/* MES DEVIS */
+.devis-table{width:100%;border-collapse:collapse;font-size:13px}
+.devis-table th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:0 16px 10px;border-bottom:2px solid var(--line)}
+.devis-table td{padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+.devis-table tr:last-child td{border-bottom:none}
+.devis-table tr:hover td{background:#FAFBFC}
 .dv-ref{font-weight:700;color:var(--brand)}
-.dv-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap}
-.dv-badge.sent{background:rgba(46,134,193,.1);color:var(--accent)}
-.dv-badge.late{background:#FEF3E2;color:var(--amber)}
-.dv-badge.ok{background:#E6F7EF;color:var(--ok)}
-.dv-badge.draft{background:var(--bg);color:var(--muted)}
-.dv-acts{display:flex;gap:5px}
-.ic-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px;display:grid;place-items:center;transition:.15s;text-decoration:none}
-.ic-btn:hover{border-color:var(--accent);background:rgba(46,134,193,.06)}
-.ic-btn.grn:hover{border-color:var(--ok);background:#E6F7EF}
-.ic-btn.red:hover{border-color:var(--bad);background:#FDECEC}
+.dv-amount{font-weight:700}
+.dv-status{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap}
+.dv-status.sent{background:rgba(var(--accent-rgb),.1);color:var(--accent)}
+.dv-status.late{background:#FEF3E2;color:var(--amber)}
+.dv-status.accepted{background:#E6F7EF;color:var(--ok)}
+.dv-status.draft{background:var(--bg);color:var(--muted)}
+.dv-actions{display:flex;gap:6px}
+.ic-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px;display:grid;place-items:center;transition:.15s}
+.ic-btn:hover{border-color:var(--emerald);background:rgba(var(--emerald-rgb),.06)}
+.ic-btn.gen:hover{border-color:var(--ok);background:#E6F7EF}
 
-/* PIPELINE */
-.pipe-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;padding:14px}
-.pipe-col{}
-.pipe-col-h{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
-.pipe-cnt{background:var(--line);color:var(--muted);font-size:9px;padding:1px 6px;border-radius:8px}
-.pipe-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:6px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(30,58,95,.04)}
-.pipe-card:hover{border-color:var(--accent);transform:translateY(-1px)}
-.pipe-card-c{font-size:11px;font-weight:700;color:var(--brand);margin-bottom:2px}
-.pipe-card-s{font-size:10px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pipe-card-f{display:flex;justify-content:space-between;align-items:center}
-.pipe-card-a{font-size:11px;font-weight:700;color:var(--ok)}
-.pipe-card-d{font-size:9px;color:var(--muted)}
-.pipe-col.won .pipe-col-h{color:var(--ok)}
-.pipe-col.lost .pipe-col-h{color:var(--bad)}
-
-/* PROJETS */
-.proj-list{padding:14px;display:flex;flex-direction:column;gap:9px}
-.proj-item{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;transition:.15s}
-.proj-item:hover{border-color:var(--accent);background:#fff}
-.proj-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
-.proj-name{font-size:13px;font-weight:700;color:var(--brand)}
-.proj-sub{font-size:10px;color:var(--muted);margin-top:2px}
-.proj-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px}
-.proj-badge.win{background:#E6F7EF;color:var(--ok)}
-.proj-badge.eq{background:#FEF3E2;color:var(--amber)}
-.proj-badge.loss{background:#FDECEC;color:var(--bad)}
-.proj-bar-bg{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:6px}
-.proj-bar{height:100%;border-radius:2px}
-.proj-bar.win{background:linear-gradient(90deg,var(--ok),var(--emerald))}
-.proj-bar.eq{background:linear-gradient(90deg,var(--amber),#FCD34D)}
-.proj-bar.loss{background:linear-gradient(90deg,var(--bad),#F87171)}
-.proj-nums{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
-.proj-nums b{color:var(--text);font-weight:600}
+/* REMISE TAG */
+.remise-tag{font-size:10px;font-weight:700;background:rgba(217,119,6,.1);color:var(--amber);padding:2px 7px;border-radius:8px;margin-left:6px}
 
 /* ACTIVITÉS */
 .act-list{display:flex;flex-direction:column}
-.act-item{display:flex;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line)}
+.act-item{display:flex;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line)}
 .act-item:last-child{border-bottom:none}
-.act-dot{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex-shrink:0}
-.act-dot.g{background:rgba(72,201,176,.12)}
-.act-dot.b{background:rgba(46,134,193,.1)}
-.act-dot.a{background:rgba(217,119,6,.1)}
-.act-dot.r{background:rgba(220,38,38,.08)}
-.act-txt{font-size:12px;color:var(--text);line-height:1.4}
+.act-dot{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex-shrink:0}
+.act-dot.green{background:rgba(var(--emerald-rgb),.12)}
+.act-dot.blue{background:rgba(var(--accent-rgb),.1)}
+.act-dot.amber{background:rgba(217,119,6,.1)}
+.act-dot.red{background:rgba(220,38,38,.08)}
+.act-txt{font-size:13px;color:var(--text);line-height:1.4}
 .act-txt b{color:var(--brand)}
-.act-time{font-size:10px;color:var(--muted);margin-top:2px}
+.act-time{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* CLIENTS */
+.client-list{display:flex;flex-direction:column}
+.client-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
+.client-item:last-child{border-bottom:none}
+.client-item:hover{background:#FAFBFC}
+.cl-avatar{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--brand));display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.cl-info{flex:1}
+.cl-name{font-size:13px;font-weight:700;color:var(--brand)}
+.cl-sector{font-size:11px;color:var(--muted)}
+.cl-ca{font-size:13px;font-weight:700;color:var(--ok)}
 
 /* TOAST */
-.toast{position:fixed;bottom:22px;right:22px;z-index:999;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.15);transform:translateY(70px);opacity:0;transition:.3s cubic-bezier(.34,1.56,.64,1)}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1)}
 .toast.show{transform:none;opacity:1}
 .toast.success{background:linear-gradient(135deg,var(--ok),#13784f)}
-.toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
+.toast.info{background:linear-gradient(135deg,var(--emerald),#1A9E80)}
 .toast.warn{background:linear-gradient(135deg,var(--amber),#B45309)}
 .toast.error{background:linear-gradient(135deg,var(--bad),#991B1B)}
+
+/* BLOCKED */
+.blocked-msg{background:#FDECEC;border:1px solid #F5C0C0;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--bad);display:flex;align-items:center;gap:10px;margin-bottom:20px}
+
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:1fr 1fr}.main-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -207,184 +201,157 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
   </div>
   <nav class="sb-nav" id="sideNav"></nav>
   <div class="sb-foot">
-    <button class="logout" onclick="window.location.href='login.html'">🚪 Se déconnecter</button>
+    <button class="logout-btn" onclick="window.location.href='login.html'">
+      <span style="font-size:16px">🚪</span> Se déconnecter
+    </button>
   </div>
 </aside>
 
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-l">
-      <h1>Tableau de bord</h1>
-      <p id="dateLabel"></p>
+    <div class="topbar-left">
+      <h1>Mon Dashboard</h1>
+      <p>Jeudi 25 juin 2026 · Mon portefeuille</p>
     </div>
-    <div class="topbar-r">
-      <button class="tbtn ghost" onclick="toast('Export en cours…','info')">📥 Exporter</button>
-      <button class="tbtn primary" onclick="window.location.href='nouveau-devis.html'">＋ Nouveau devis</button>
-      <div class="notif" onclick="toast('3 notifications non lues','warn')">🔔<div class="notif-dot"></div></div>
+    <div class="topbar-right">
+      <button class="tb-btn ghost" onclick="window.location.href='catalogue.html'">📦 Catalogue</button>
+      <button class="tb-btn primary" onclick="window.location.href='nouveau-devis.html'">＋ Nouveau devis</button>
+      <div class="notif-btn" onclick="showToast('1 notification non lue','warn')">🔔<div class="notif-dot"></div></div>
     </div>
   </div>
 
   <div class="content">
 
-    <!-- FLUX COMMERCIAL -->
-    <div class="flux-banner">
-      <div class="flux-title">⚡ Flux commercial — clique sur une étape pour y accéder</div>
-      <div class="flux-steps">
 
-        <div class="flux-step" onclick="window.location.href='contacts.html'">
-          <div class="fs-box done">
-            <div class="fs-num">Étape 1</div>
-            <div class="fs-label">🏢 Client</div>
-            <div class="fs-sub">Ajouter / CRM</div>
-          </div>
-        </div>
-        <div class="flux-arrow">→</div>
 
-        <div class="flux-step" onclick="window.location.href='nouveau-devis.html'">
-          <div class="fs-box active">
-            <div class="fs-num">Étape 2</div>
-            <div class="fs-label">📄 Devis</div>
-            <div class="fs-sub">Créer & envoyer</div>
-          </div>
-        </div>
-        <div class="flux-arrow">→</div>
-
-        <div class="flux-step" onclick="window.location.href='analyse-bon-commande.html'">
-          <div class="fs-box">
-            <div class="fs-num">Étape 3</div>
-            <div class="fs-label">📋 Bon de commande</div>
-            <div class="fs-sub">Analyser & valider</div>
-          </div>
-        </div>
-        <div class="flux-arrow">→</div>
-
-        <div class="flux-step" onclick="window.location.href='facture-preview.html'">
-          <div class="fs-box">
-            <div class="fs-num">Étape 4</div>
-            <div class="fs-label">🧾 Facture</div>
-            <div class="fs-sub">Générer & imprimer</div>
-          </div>
-        </div>
-        <div class="flux-arrow">→</div>
-
-        <div class="flux-step" onclick="toast('Module Contrats — bientôt disponible','info')">
-          <div class="fs-box">
-            <div class="fs-num">Étape 5</div>
-            <div class="fs-label">📑 Contrat</div>
-            <div class="fs-sub">Signer & archiver</div>
-          </div>
-        </div>
-
+    <!-- OBJECTIF DU MOIS -->
+    <div class="obj-banner">
+      <div class="obj-left">
+        <h3>Mon objectif · Juin 2026</h3>
+        <div class="obj-num">38 400 DT</div>
+        <div class="obj-sub">réalisés sur 60 000 DT d'objectif</div>
       </div>
+      <div class="obj-bar-wrap">
+        <div class="obj-bar-label"><span>Progression</span><b id="pctLabel">64%</b></div>
+        <div class="obj-bar-bg"><div class="obj-bar-fill" id="objBar"></div></div>
+      </div>
+      <div class="obj-pct" id="objPct">64%</div>
     </div>
 
     <!-- ACTIONS RAPIDES -->
-    <div class="qa-grid">
-      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')">
-        <div class="qa-ic blue">📄</div>
-        <div class="qa-label">Nouveau devis</div>
-        <div class="qa-sub">Créer depuis catalogue</div>
-      </a>
-      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('facture-preview')">
-        <div class="qa-ic green">🧾</div>
-        <div class="qa-label">Générer facture</div>
-        <div class="qa-sub">Depuis devis accepté</div>
-      </a>
-      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('contacts')">
-        <div class="qa-ic violet">🏢</div>
-        <div class="qa-label">Ajouter contact</div>
-        <div class="qa-sub">Client / Fournisseur</div>
-      </a>
-      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')">
-        <div class="qa-ic amber">📋</div>
-        <div class="qa-label">Analyser BC</div>
-        <div class="qa-sub">OCR + vérification</div>
-      </a>
-      <a class="qa-btn" href="javascript:void(0)" onclick="goTo('admin-comptes')">
-        <div class="qa-ic red">🔐</div>
-        <div class="qa-label">Gérer comptes</div>
-        <div class="qa-sub">Commerciaux & accès</div>
-      </a>
+    <div class="quick-actions">
+      <button class="qa-btn" onclick="window.location.href='nouveau-devis.html'">
+        <div class="qa-ic green">📄</div>
+        <div class="qa-txt"><b>Nouveau devis</b><span>Avec remise possible</span></div>
+      </button>
+      <button class="qa-btn" onclick="window.location.href='facture-preview.html'">
+        <div class="qa-ic blue">🧾</div>
+        <div class="qa-txt"><b>Générer facture</b><span>Depuis un devis accepté</span></div>
+      </button>
+      <button class="qa-btn" onclick="window.location.href='contacts.html'">
+        <div class="qa-ic amber">📦</div>
+        <div class="qa-txt"><b>Voir catalogue</b><span>Prix fixés par l'Admin</span></div>
+      </button>
     </div>
 
-    <!-- KPIs -->
+    <!-- KPIs PERSONNELS -->
     <div class="kpi-grid">
-      <div class="kpi blue">
-        <div class="kpi-icon">💰</div>
-        <div class="kpi-lbl">CA du mois (DT)</div>
-        <div class="kpi-val">84 200</div>
-        <div class="kpi-sub"><span class="delta up">↑ +18%</span> vs mois dernier</div>
-      </div>
       <div class="kpi green">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-label">Mon CA (juin)</div>
+        <div class="kpi-val">38 400 DT</div>
+        <div class="kpi-sub"><span class="kpi-delta up">↑ +12%</span> vs mai</div>
+      </div>
+      <div class="kpi blue">
         <div class="kpi-icon">📄</div>
-        <div class="kpi-lbl">Devis envoyés</div>
-        <div class="kpi-val">12</div>
-        <div class="kpi-sub"><span class="delta up">5 acceptés</span> ce mois</div>
+        <div class="kpi-label">Mes devis</div>
+        <div class="kpi-val">6</div>
+        <div class="kpi-sub"><span class="kpi-delta up">↑ 3 acceptés</span> ce mois</div>
       </div>
       <div class="kpi violet">
-        <div class="kpi-icon">🧾</div>
-        <div class="kpi-lbl">Factures émises</div>
+        <div class="kpi-icon">🔀</div>
+        <div class="kpi-label">Mes opportunités</div>
         <div class="kpi-val">8</div>
-        <div class="kpi-sub"><span class="delta dn">2 en retard</span></div>
+        <div class="kpi-sub"><span class="kpi-delta up">↑ 2 en négociation</span></div>
       </div>
       <div class="kpi amber">
         <div class="kpi-icon">🎯</div>
-        <div class="kpi-lbl">Taux conversion</div>
-        <div class="kpi-val">41%</div>
-        <div class="kpi-sub"><span class="delta up">↑ +6pts</span> vs mois dernier</div>
+        <div class="kpi-label">Taux conversion</div>
+        <div class="kpi-val">50%</div>
+        <div class="kpi-sub"><span class="kpi-delta up">↑ +9pts</span> vs mois dernier</div>
       </div>
     </div>
 
     <!-- GRILLE PRINCIPALE -->
     <div class="main-grid">
 
-      <!-- GAUCHE -->
-      <div>
+      <!-- COLONNE GAUCHE -->
+      <div style="display:flex;flex-direction:column;gap:20px">
 
-        <!-- DEVIS EN ATTENTE -->
+        <!-- MON PIPELINE RÉSUMÉ -->
         <div class="card">
           <div class="card-h">
-            <div class="card-h-l"><div class="cdot"></div><h2>Devis en attente</h2></div>
-            <a class="card-link" href="javascript:void(0)" onclick="goTo('nouveau-devis')">+ Nouveau →</a>
+            <div class="card-h-left"><div class="dot"></div><h2>Mon pipeline</h2></div>
+            <a class="card-link" href="#">Voir en détail →</a>
+          </div>
+          <div class="mini-pipeline">
+            <div class="mp-col"><div class="mp-label">Lead</div><div class="mp-num">2</div><div class="mp-amount">20 500 DT</div></div>
+            <div class="mp-col"><div class="mp-label">Qualifié</div><div class="mp-num">2</div><div class="mp-amount">30 000 DT</div></div>
+            <div class="mp-col"><div class="mp-label">Gagné</div><div class="mp-num" style="color:var(--ok)">3</div><div class="mp-amount" style="color:var(--ok)">71 000 DT</div></div>
+            <div class="mp-col"><div class="mp-label">Perdu</div><div class="mp-num" style="color:var(--bad)">1</div><div class="mp-amount" style="color:var(--bad)">9 000 DT</div></div>
+          </div>
+        </div>
+
+        <!-- MES DEVIS -->
+        <div class="card">
+          <div class="card-h">
+            <div class="card-h-left"><div class="dot"></div><h2>Mes devis récents</h2></div>
+            <a class="card-link" href="#">Voir tous →</a>
           </div>
           <div style="overflow-x:auto">
-            <table class="dv-tbl">
+            <table class="devis-table">
               <thead>
-                <tr><th>Référence</th><th>Client</th><th>Montant (DT)</th><th>Statut</th><th>Actions</th></tr>
+                <tr><th>Référence</th><th>Client</th><th>Montant HT</th><th>Statut</th><th>Actions</th></tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><span class="dv-ref">DEV-2026-008</span></td>
-                  <td>AlgoSoft</td>
-                  <td style="font-weight:700">6 200,000</td>
-                  <td><span class="dv-badge late">⏱ +9 jours</span></td>
-                  <td><div class="dv-acts">
-                    <a class="ic-btn grn" href="javascript:void(0)" onclick="goTo('facture-preview')" title="Générer facture">🧾</a>
-                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')" title="Modifier">✏️</a>
-                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')" title="Bon de commande">📋</a>
+                  <td><span class="dv-ref">DEV-2026-007</span></td>
+                  <td>DataCore</td>
+                  <td class="dv-amount">35 000 DT <span class="remise-tag">-5%</span></td>
+                  <td><span class="dv-status accepted">✅ Accepté</span></td>
+                  <td><div class="dv-actions">
+                    <button class="ic-btn gen" title="Générer facture" onclick="window.location.href='facture-preview.html'">🧾</button>
+                    <button class="ic-btn" title="Modifier remise" onclick="window.location.href='nouveau-devis.html'">✏️</button>
                   </div></td>
                 </tr>
                 <tr>
                   <td><span class="dv-ref">DEV-2026-009</span></td>
                   <td>FinTech TN</td>
-                  <td style="font-weight:700">18 000,000</td>
-                  <td><span class="dv-badge sent">📤 Envoyé</span></td>
-                  <td><div class="dv-acts">
-                    <a class="ic-btn grn" href="javascript:void(0)" onclick="goTo('facture-preview')" title="Générer facture">🧾</a>
-                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')" title="Modifier">✏️</a>
-                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')" title="Bon de commande">📋</a>
+                  <td class="dv-amount">18 000 DT</td>
+                  <td><span class="dv-status sent">📤 Envoyé</span></td>
+                  <td><div class="dv-actions">
+                    <button class="ic-btn" title="Modifier remise" onclick="window.location.href='nouveau-devis.html'">✏️</button>
+                    <button class="ic-btn" title="Relancer" onclick="showToast('Email de relance envoyé','info')">📧</button>
                   </div></td>
                 </tr>
                 <tr>
-                  <td><span class="dv-ref">DEV-2026-010</span></td>
-                  <td>BTP Conseil</td>
-                  <td style="font-weight:700">24 000,000</td>
-                  <td><span class="dv-badge ok">✅ Accepté</span></td>
-                  <td><div class="dv-acts">
-                    <a class="ic-btn grn" href="javascript:void(0)" onclick="goTo('facture-preview')" title="Générer facture">🧾</a>
-                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('nouveau-devis')" title="Modifier">✏️</a>
-                    <a class="ic-btn" href="javascript:void(0)" onclick="goTo('analyse-bon-commande')" title="Analyser BC">📋</a>
+                  <td><span class="dv-ref">DEV-2026-011</span></td>
+                  <td>SudTech SARL</td>
+                  <td class="dv-amount">12 000 DT <span class="remise-tag">-10%</span></td>
+                  <td><span class="dv-status late">⏱ +5 jours</span></td>
+                  <td><div class="dv-actions">
+                    <button class="ic-btn" title="Modifier remise" onclick="window.location.href='nouveau-devis.html'">✏️</button>
+                    <button class="ic-btn" title="Relancer" onclick="showToast('Email de relance envoyé','info')">📧</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><span class="dv-ref">DEV-2026-012</span></td>
+                  <td>MediaPlus</td>
+                  <td class="dv-amount">8 500 DT</td>
+                  <td><span class="dv-status draft">📝 Brouillon</span></td>
+                  <td><div class="dv-actions">
+                    <button class="ic-btn" title="Modifier" onclick="window.location.href='nouveau-devis.html'">✏️</button>
                   </div></td>
                 </tr>
               </tbody>
@@ -392,62 +359,37 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
           </div>
         </div>
 
-        <!-- PIPELINE -->
-        <div class="card" id="pipeline">
-          <div class="card-h">
-            <div class="card-h-l"><div class="cdot"></div><h2>Pipeline commercial</h2></div>
-          </div>
-          <div class="pipe-cols">
-            <div class="pipe-col">
-              <div class="pipe-col-h">Lead <span class="pipe-cnt">2</span></div>
-              <div class="pipe-card"><div class="pipe-card-c">SudTech SARL</div><div class="pipe-card-s">Infogérance Cloud</div><div class="pipe-card-f"><span class="pipe-card-a">12 000 DT</span><span class="pipe-card-d">30 juin</span></div></div>
-              <div class="pipe-card"><div class="pipe-card-c">MediaPlus</div><div class="pipe-card-s">Audit cybersécurité</div><div class="pipe-card-f"><span class="pipe-card-a">8 500 DT</span><span class="pipe-card-d">05 juil</span></div></div>
-            </div>
-            <div class="pipe-col">
-              <div class="pipe-col-h">Qualifié <span class="pipe-cnt">1</span></div>
-              <div class="pipe-card"><div class="pipe-card-c">BTP Conseil</div><div class="pipe-card-s">Dev portail RH</div><div class="pipe-card-f"><span class="pipe-card-a">24 000 DT</span><span class="pipe-card-d">15 juil</span></div></div>
-            </div>
-            <div class="pipe-col">
-              <div class="pipe-col-h">Proposition <span class="pipe-cnt">2</span></div>
-              <div class="pipe-card"><div class="pipe-card-c">AlgoSoft</div><div class="pipe-card-s">Formation DevOps</div><div class="pipe-card-f"><span class="pipe-card-a">6 200 DT</span><span class="pipe-card-d">28 juin</span></div></div>
-              <div class="pipe-card"><div class="pipe-card-c">FinTech TN</div><div class="pipe-card-s">Migration AWS</div><div class="pipe-card-f"><span class="pipe-card-a">18 000 DT</span><span class="pipe-card-d">02 juil</span></div></div>
-            </div>
-            <div class="pipe-col won">
-              <div class="pipe-col-h">Gagné <span class="pipe-cnt">3</span></div>
-              <div class="pipe-card"><div class="pipe-card-c">DataCore</div><div class="pipe-card-s">ERP Personnalisé</div><div class="pipe-card-f"><span class="pipe-card-a">35 000 DT</span><span class="pipe-card-d">✅</span></div></div>
-            </div>
-            <div class="pipe-col lost">
-              <div class="pipe-col-h">Perdu <span class="pipe-cnt">1</span></div>
-              <div class="pipe-card"><div class="pipe-card-c">RetailCo</div><div class="pipe-card-s">CRM sur mesure</div><div class="pipe-card-f"><span class="pipe-card-a" style="color:var(--bad)">9 000 DT</span><span class="pipe-card-d">❌</span></div></div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- DROITE -->
-      <div>
+      <!-- COLONNE DROITE -->
+      <div style="display:flex;flex-direction:column;gap:20px">
 
-        <!-- PROJETS -->
-        <div class="card" id="projets">
+        <!-- MES CLIENTS -->
+        <div class="card">
           <div class="card-h">
-            <div class="card-h-l"><div class="cdot"></div><h2>Projets · Rentabilité</h2></div>
+            <div class="card-h-left"><div class="dot"></div><h2>Mes clients</h2></div>
+            <a class="card-link" href="#">Voir tous →</a>
           </div>
-          <div class="proj-list">
-            <div class="proj-item">
-              <div class="proj-h"><div><div class="proj-name">Projet DataCore ERP</div><div class="proj-sub">Commercial : Amjad</div></div><span class="proj-badge win">🟢 Gagnant</span></div>
-              <div class="proj-bar-bg"><div class="proj-bar win" style="width:78%"></div></div>
-              <div class="proj-nums"><span>Revenus : <b>35 000 DT</b></span><span>Coûts : <b>27 300 DT</b></span></div>
+          <div class="client-list">
+            <div class="client-item" onclick="showToast('Fiche DataCore ouverte','info')">
+              <div class="cl-avatar">D</div>
+              <div class="cl-info"><div class="cl-name">DataCore</div><div class="cl-sector">Éditeur logiciel</div></div>
+              <div class="cl-ca">35 000 DT</div>
             </div>
-            <div class="proj-item">
-              <div class="proj-h"><div><div class="proj-name">Audit FinTech TN</div><div class="proj-sub">Commercial : Sara</div></div><span class="proj-badge eq">🟠 Équilibre</span></div>
-              <div class="proj-bar-bg"><div class="proj-bar eq" style="width:51%"></div></div>
-              <div class="proj-nums"><span>Revenus : <b>18 000 DT</b></span><span>Coûts : <b>17 400 DT</b></span></div>
+            <div class="client-item" onclick="showToast('Fiche FinTech TN ouverte','info')">
+              <div class="cl-avatar" style="background:linear-gradient(135deg,var(--violet),#7C3AED)">F</div>
+              <div class="cl-info"><div class="cl-name">FinTech TN</div><div class="cl-sector">Services financiers</div></div>
+              <div class="cl-ca">18 000 DT</div>
             </div>
-            <div class="proj-item">
-              <div class="proj-h"><div><div class="proj-name">Portail RH BTP</div><div class="proj-sub">Commercial : Karim</div></div><span class="proj-badge loss">🔴 Déficitaire</span></div>
-              <div class="proj-bar-bg"><div class="proj-bar loss" style="width:35%"></div></div>
-              <div class="proj-nums"><span>Revenus : <b>24 000 DT</b></span><span>Coûts : <b>31 200 DT</b></span></div>
+            <div class="client-item" onclick="showToast('Fiche SudTech ouverte','info')">
+              <div class="cl-avatar" style="background:linear-gradient(135deg,var(--emerald),#1A9E80)">S</div>
+              <div class="cl-info"><div class="cl-name">SudTech SARL</div><div class="cl-sector">Industrie IT</div></div>
+              <div class="cl-ca">12 000 DT</div>
+            </div>
+            <div class="client-item" onclick="showToast('Fiche MediaPlus ouverte','info')">
+              <div class="cl-avatar" style="background:linear-gradient(135deg,var(--amber),#D97706)">M</div>
+              <div class="cl-info"><div class="cl-name">MediaPlus</div><div class="cl-sector">Médias & Digital</div></div>
+              <div class="cl-ca">8 500 DT</div>
             </div>
           </div>
         </div>
@@ -455,28 +397,24 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
         <!-- ACTIVITÉS -->
         <div class="card">
           <div class="card-h">
-            <div class="card-h-l"><div class="cdot"></div><h2>Activité récente</h2></div>
+            <div class="card-h-left"><div class="dot"></div><h2>Activité récente</h2></div>
           </div>
           <div class="act-list">
             <div class="act-item">
-              <div class="act-dot g">🧾</div>
-              <div><div class="act-txt"><b>Facture FACT-2026-007</b> générée → DataCore</div><div class="act-time">Il y a 12 min · Amjad</div></div>
+              <div class="act-dot green">✅</div>
+              <div><div class="act-txt"><b>DEV-2026-007</b> accepté par DataCore</div><div class="act-time">Il y a 2h</div></div>
             </div>
             <div class="act-item">
-              <div class="act-dot b">📄</div>
-              <div><div class="act-txt"><b>DEV-2026-010</b> accepté par BTP Conseil — 24 000 DT</div><div class="act-time">Il y a 1h · Sara</div></div>
+              <div class="act-dot amber">⏱</div>
+              <div><div class="act-txt"><b>DEV-2026-011</b> sans réponse — relance recommandée</div><div class="act-time">Alerte · Aujourd'hui</div></div>
             </div>
             <div class="act-item">
-              <div class="act-dot a">⏱</div>
-              <div><div class="act-txt"><b>DEV-2026-008</b> sans réponse depuis 9 jours</div><div class="act-time">Alerte · Aujourd'hui</div></div>
+              <div class="act-dot blue">📧</div>
+              <div><div class="act-txt">Relance envoyée à <b>FinTech TN</b></div><div class="act-time">Hier</div></div>
             </div>
             <div class="act-item">
-              <div class="act-dot b">🏢</div>
-              <div><div class="act-txt">Nouveau client <b>MediaPlus</b> ajouté</div><div class="act-time">Hier · Karim</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot r">❌</div>
-              <div><div class="act-txt">Opportunité <b>RetailCo</b> perdue — 9 000 DT</div><div class="act-time">Hier · Amjad</div></div>
+              <div class="act-dot green">🏢</div>
+              <div><div class="act-txt">Nouveau client <b>MediaPlus</b> ajouté</div><div class="act-time">Hier</div></div>
             </div>
           </div>
         </div>
@@ -486,19 +424,73 @@ html,body{height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--b
   </div>
 </div>
 
-<div class="toast" id="toastEl"></div>
+<!-- MODAL REMISE -->
+<div id="remiseOverlay" style="display:none;position:fixed;inset:0;background:rgba(30,58,95,.45);z-index:200;place-items:center;backdrop-filter:blur(3px)">
+  <div style="background:#fff;border-radius:16px;padding:28px;width:100%;max-width:400px;margin:20px;box-shadow:0 24px 64px rgba(30,58,95,.2)">
+    <h3 style="font-size:17px;font-weight:800;color:var(--brand);margin-bottom:6px">Modifier la remise</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Tu peux appliquer une remise commerciale. Le prix unitaire des services reste fixé par l'Admin.</p>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:block">Prix avant remise (HT)</label>
+      <div style="padding:12px 14px;background:var(--bg);border:1px solid var(--line);border-radius:9px;font-size:16px;font-weight:700;color:var(--muted)">35 000 DT</div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:block">Remise commerciale (%)</label>
+      <input id="remiseInput" type="number" min="0" max="40" value="5" oninput="calcRemise()"
+        style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:.2s"
+        onfocus="this.style.borderColor='var(--emerald)'" onblur="this.style.borderColor='var(--line)'">
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">Max. 40% · Le prix unitaire ne peut être modifié que par l'Admin</div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(72,201,176,.08),rgba(72,201,176,.03));border:1px solid rgba(72,201,176,.25);border-radius:10px;padding:14px;margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="color:var(--muted)">Prix avant remise</span><span style="font-weight:600">35 000 DT</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span style="color:var(--amber);font-weight:600">Remise (<span id="remisePct">5</span>%)</span><span style="color:var(--amber);font-weight:700">- <span id="remiseMontant">1 750</span> DT</span></div>
+      <div style="height:1px;background:rgba(72,201,176,.2);margin:8px 0"></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px"><span style="font-weight:700;color:var(--brand)">Prix après remise</span><span style="font-weight:800;color:var(--ok);font-size:17px" id="remiseFinal">33 250 DT</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="closeRemise()" style="padding:12px;border-radius:9px;background:var(--line);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text)">Annuler</button>
+      <button onclick="saveRemise()" style="padding:12px;border-radius:9px;background:linear-gradient(135deg,var(--emerald),#1A9E80);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;color:#fff">Appliquer la remise</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// Date
-document.getElementById('dateLabel').textContent =
-  new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + ' · Vue globale';
+// Barre objectif animée
+setTimeout(() => {
+  document.getElementById('objBar').style.width = '64%';
+}, 300);
 
-// Toast
-function toast(msg,type='info'){
-  const t=document.getElementById('toastEl');
-  t.textContent=msg; t.className='toast '+type;
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type;
   void t.offsetWidth; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function genFacture() {
+  showToast('✅ Facture FACT-2026-007 générée depuis DEV-2026-007 — DataCore !', 'success');
+}
+
+function modifierRemise() {
+  document.getElementById('remiseOverlay').style.display = 'grid';
+}
+function closeRemise() {
+  document.getElementById('remiseOverlay').style.display = 'none';
+}
+function calcRemise() {
+  const pct = Math.min(40, Math.max(0, parseFloat(document.getElementById('remiseInput').value) || 0));
+  const base = 35000;
+  const remise = base * pct / 100;
+  const final = base - remise;
+  document.getElementById('remisePct').textContent = pct;
+  document.getElementById('remiseMontant').textContent = new Intl.NumberFormat('fr-FR').format(remise);
+  document.getElementById('remiseFinal').textContent = new Intl.NumberFormat('fr-FR').format(final) + ' DT';
+}
+function saveRemise() {
+  const pct = document.getElementById('remiseInput').value;
+  closeRemise();
+  showToast(`✅ Remise de ${pct}% appliquée sur DEV-2026-007`, 'success');
 }
 </script>
 
@@ -543,7 +535,7 @@ function goTo(page) {
   nav.innerHTML =
     '<span style="'+SEC+'">PRINCIPAL</span>' +
     a(dash, '&#128202;', 'Dashboard') +
-    a('contacts.html', '&#128101;', isAdmin ? 'Contacts' : 'Mes Clients') +
+        (isAdmin ? a('contacts.html', '&#128101;', 'Contacts') : '') +
     '<span style="'+SEC+'">COMMERCIAL</span>' +
     a('nouveau-devis.html', '&#128196;', isAdmin ? 'Devis' : 'Mes Devis') +
     a('facture-preview.html', '&#129534;', isAdmin ? 'Factures' : 'Mes Factures') +
