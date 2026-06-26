@@ -441,8 +441,10 @@ async function login() {
   const user  = DEMO_USERS.find(u => u.email === email && u.password === pass && u.role === currentRole);
   btn.classList.remove('loading'); btn.disabled = false;
   if (user) {
-    showToast(`✅ Bienvenue, ${user.name} !`, 'success');
-    setTimeout(() => alert(`✅ Connexion réussie !\n\nRôle : ${user.role.toUpperCase()}\nNom : ${user.name}\n\n→ Redirection vers le Dashboard ${user.role === 'admin' ? 'Admin' : 'Commercial'}…`), 800);
+    showToast(`✅ Bienvenue, ${user.name} ! Redirection…`, 'success');
+    setTimeout(() => {
+      window.location.href = user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+    }, 1200);
   } else {
     document.getElementById('err-global').classList.add('show');
     document.getElementById('email').style.borderColor = 'var(--error)';
