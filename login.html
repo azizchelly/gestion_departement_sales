@@ -1,400 +1,190 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>
-const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
-
-async function sbGet(table, filters) {
-  let url = SB_URL + "/rest/v1/" + table + "?order=id.asc";
-  if (filters) url += "&" + filters;
-  const r = await fetch(url, {
-    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return await r.json();
-}
-
-async function sbInsert(table, data) {
-  const r = await fetch(SB_URL + "/rest/v1/" + table, {
-    method: "POST",
-    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json", "Prefer": "return=representation"},
-    body: JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return await r.json();
-}
-
-async function sbUpdate(table, id, data) {
-  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
-    method: "PATCH",
-    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"},
-    body: JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return true;
-}
-
-async function sbDelete(table, id) {
-  const r = await fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
-    method: "DELETE",
-    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return true;
-}
-
-async function sbAuth(email, password) {
-  const r = await fetch(SB_URL + "/auth/v1/token?grant_type=password", {
-    method: "POST",
-    headers: {"apikey": SB_KEY, "Content-Type": "application/json"},
-    body: JSON.stringify({ email, password })
-  });
-  const d = await r.json();
-  if (!r.ok) throw new Error(d.error_description || d.msg || "Erreur auth");
-  return d;
-}
-
-</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SalesFlow Pro — Connexion</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --brand:#1E3A5F;--accent:#2E86C1;--accent-rgb:46,134,193;
-  --emerald:#48C9B0;--emerald-rgb:72,201,176;
-  --bg:#F4F6F9;--white:#fff;--text:#1F2933;--muted:#6B7785;--line:#E2E8F0;
-  --error:#DC2626;--ok:#1E9E6A;--warn:#D97706;
-  --transition:all .35s cubic-bezier(.4,0,.2,1);
+  --brand:#1E3A5F;--accent:#2E86C1;--emerald:#48C9B0;
+  --bg:#F0F3F8;--card:#fff;--text:#1F2933;--muted:#6B7785;
+  --line:#E2E8F0;--ok:#1E9E6A;--bad:#DC2626;
+  --shadow:0 4px 24px rgba(30,58,95,.12);
 }
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);-webkit-font-smoothing:antialiased}
 
-/* LAYOUT */
 .page{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
 @media(max-width:768px){.page{grid-template-columns:1fr}}
 
-/* BRAND SIDE */
-.brand-side{background:var(--brand);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 48px}
-@media(max-width:768px){.brand-side{display:none}}
-.brand-side::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(46,134,193,.18) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(72,201,176,.12) 0%,transparent 50%);animation:pulse 6s ease-in-out infinite alternate}
-@keyframes pulse{from{opacity:.6}to{opacity:1}}
-.grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px}
-.brand-content{position:relative;z-index:1;text-align:center}
-.logo-mark{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--emerald));display:grid;place-items:center;margin:0 auto 28px;font-size:28px;font-weight:800;color:#fff;box-shadow:0 8px 32px rgba(46,134,193,.4);animation:logoIn .8s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes logoIn{from{transform:scale(.5) rotate(-10deg);opacity:0}to{transform:none;opacity:1}}
-.brand-name{font-size:34px;font-weight:800;color:#fff;letter-spacing:-1px;animation:slideUp .6s .15s ease both}
+/* GAUCHE */
+.brand{background:var(--brand);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 48px;position:relative;overflow:hidden}
+@media(max-width:768px){.brand{display:none}}
+.brand::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 25%,rgba(46,134,193,.2),transparent 50%),radial-gradient(circle at 75% 75%,rgba(72,201,176,.15),transparent 50%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px}
+.bc{position:relative;z-index:1;text-align:center}
+.logo-box{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--emerald));display:grid;place-items:center;margin:0 auto 24px;font-size:28px;font-weight:900;color:#fff;box-shadow:0 8px 32px rgba(46,134,193,.4)}
+.brand-name{font-size:36px;font-weight:800;color:#fff;margin-bottom:8px}
 .brand-name span{color:var(--emerald)}
-.brand-tag{font-size:14px;color:rgba(255,255,255,.55);margin-top:10px;animation:slideUp .6s .25s ease both}
-@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px;animation:slideUp .6s .4s ease both}
-.stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 12px;text-align:center}
-.stat-n{font-size:22px;font-weight:800;color:#fff}
-.stat-l{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
-.features{margin-top:36px;display:flex;flex-direction:column;gap:12px;text-align:left;animation:slideUp .6s .5s ease both}
-.feat{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 16px}
+.brand-tag{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:48px}
+.feat{display:flex;flex-direction:column;gap:12px;width:100%}
+.feat-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 16px}
 .feat-ic{width:32px;height:32px;border-radius:8px;background:rgba(46,134,193,.25);display:grid;place-items:center;font-size:14px;flex-shrink:0}
 .feat-txt{font-size:13px;color:rgba(255,255,255,.75);font-weight:500}
 
-/* FORM SIDE */
-.form-side{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 40px;background:var(--white);position:relative}
-@media(max-width:480px){.form-side{padding:32px 20px}}
-.form-side::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--emerald));transition:var(--transition)}
-body.role-commercial .form-side::before{background:linear-gradient(90deg,var(--emerald),#2ECC9A)}
-.form-wrap{width:100%;max-width:400px}
+/* DROITE */
+.form-side{display:flex;align-items:center;justify-content:center;padding:40px;background:#fff;position:relative}
+.form-side::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--emerald))}
+.form-wrap{width:100%;max-width:380px}
 
-/* ÉCRANS (login / forgot-commercial / forgot-admin) */
-.screen{display:none}.screen.active{display:block;animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.form-logo{display:none;text-align:center;margin-bottom:32px}
+@media(max-width:768px){.form-logo{display:block}}
+.form-logo .logo-box{width:52px;height:52px;font-size:20px;margin:0 auto 10px}
+.form-logo h2{font-size:22px;font-weight:800;color:var(--brand)}
+.form-logo h2 span{color:var(--accent)}
 
-.form-header{margin-bottom:28px}
-.form-header h1{font-size:26px;font-weight:800;color:var(--brand);letter-spacing:-.5px}
-.form-header p{font-size:14px;color:var(--muted);margin-top:6px}
-.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:20px;padding:0;transition:.2s}
-.back-btn:hover{color:var(--brand)}
+.form-title{font-size:28px;font-weight:800;color:var(--brand);letter-spacing:-.5px;margin-bottom:6px}
+.form-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
 
-/* ROLE CARDS */
-.role-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
-.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
-.role-card{border:2px solid var(--line);border-radius:12px;padding:16px 14px;cursor:pointer;transition:var(--transition);background:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;overflow:hidden}
-.role-card:hover{border-color:rgba(var(--accent-rgb),.4);transform:translateY(-1px)}
-.role-card.active{border-color:var(--accent);background:linear-gradient(135deg,rgba(var(--accent-rgb),.07),rgba(var(--accent-rgb),.02));box-shadow:0 0 0 4px rgba(var(--accent-rgb),.1)}
-body.role-commercial .role-card.active{border-color:var(--emerald);background:linear-gradient(135deg,rgba(var(--emerald-rgb),.07),rgba(var(--emerald-rgb),.02));box-shadow:0 0 0 4px rgba(var(--emerald-rgb),.1)}
-.role-icon{width:44px;height:44px;border-radius:11px;background:var(--line);display:grid;place-items:center;font-size:20px;transition:var(--transition)}
-.role-card.active .role-icon{background:var(--accent);box-shadow:0 4px 12px rgba(var(--accent-rgb),.35)}
-body.role-commercial .role-card.active .role-icon{background:var(--emerald);box-shadow:0 4px 12px rgba(var(--emerald-rgb),.35)}
-.role-name{font-size:13px;font-weight:700;color:var(--text)}
-.role-desc{font-size:11px;color:var(--muted);text-align:center;line-height:1.4}
-.role-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:grid;place-items:center;opacity:0;transform:scale(.5);transition:var(--transition)}
-body.role-commercial .role-check{background:var(--emerald)}
-.role-card.active .role-check{opacity:1;transform:scale(1)}
-.role-check::after{content:'✓';font-size:10px;color:#fff;font-weight:700}
-
-/* FIELDS */
 .field{margin-bottom:16px}
-label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.input-wrap{position:relative}
-.input-wrap input{width:100%;padding:13px 44px 13px 44px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;color:var(--text);background:#fff;transition:var(--transition);outline:none}
-.input-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(var(--accent-rgb),.1)}
-body.role-commercial .input-wrap input:focus{border-color:var(--emerald);box-shadow:0 0 0 4px rgba(var(--emerald-rgb),.1)}
-.input-wrap input::placeholder{color:#BFC8D2}
-.input-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;opacity:.45}
-.toggle-pw{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;transition:opacity .2s;padding:4px}
-.toggle-pw:hover{opacity:.8}
-.error-msg{font-size:12px;color:var(--error);margin-top:6px;font-weight:500;display:none;align-items:center;gap:5px}
-.error-msg.show{display:flex}
+label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.iw{position:relative}
+.iw input{width:100%;padding:13px 44px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:.2s;background:#fff}
+.iw input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(46,134,193,.1)}
+.iw .ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.4;pointer-events:none}
+.iw .eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;transition:.2s;padding:4px}
+.iw .eye:hover{opacity:.8}
 
-/* FORGOT LINK */
-.forgot-link{text-align:right;margin-top:-8px;margin-bottom:16px}
-.forgot-link button{background:none;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;padding:0}
-.forgot-link button{color:var(--accent)}
-body.role-commercial .forgot-link button{color:var(--emerald)}
-.forgot-link button:hover{text-decoration:underline}
+.forgot{text-align:right;margin:-8px 0 16px}
+.forgot button{background:none;border:none;font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;font-family:'Inter',sans-serif}
+.forgot button:hover{text-decoration:underline}
 
-/* BUTTONS */
-.btn-submit{width:100%;padding:15px;border:none;border-radius:11px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;color:#fff;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--brand));box-shadow:0 4px 16px rgba(var(--accent-rgb),.35);transition:var(--transition);margin-top:8px}
-body.role-commercial .btn-submit{background:linear-gradient(135deg,var(--emerald),#1A9E80);box-shadow:0 4px 16px rgba(var(--emerald-rgb),.35)}
-.btn-submit:hover{transform:translateY(-1px);filter:brightness(1.06)}
-.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.btn-submit .btn-text{transition:opacity .2s}
-.btn-submit .btn-loader{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .2s}
-.btn-submit.loading .btn-text{opacity:0}
-.btn-submit.loading .btn-loader{opacity:1}
+.err{font-size:12px;color:var(--bad);font-weight:500;margin-bottom:12px;display:none;align-items:center;gap:5px;padding:10px 12px;background:#FDECEC;border-radius:8px;border-left:3px solid var(--bad)}
+.err.show{display:flex}
+
+.btn-login{width:100%;padding:15px;border:none;border-radius:11px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--brand));box-shadow:0 4px 16px rgba(46,134,193,.35);transition:.2s;position:relative;overflow:hidden}
+.btn-login:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-txt{transition:opacity .2s}
+.btn-loader{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .2s}
+.btn-login.loading .btn-txt{opacity:0}
+.btn-login.loading .btn-loader{opacity:1}
 .spin{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* INFO BOX */
-.info-box{border-radius:11px;padding:16px 18px;margin-bottom:16px;font-size:13px;line-height:1.6}
-.info-box.blue{background:rgba(var(--accent-rgb),.08);border:1px solid rgba(var(--accent-rgb),.2);color:var(--brand)}
-.info-box.green{background:var(--okbg,#E6F7EF);border:1px solid #B7E4CE;color:var(--ok)}
-.info-box.warn{background:#FEF3E2;border:1px solid #FBD9A5;color:var(--warn)}
-.info-box b{display:block;margin-bottom:4px;font-size:14px}
+/* FORGOT SCREEN */
+.screen{display:none}.screen.on{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back{background:none;border:none;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:20px;padding:0;display:flex;align-items:center;gap:5px;transition:.2s}
+.back:hover{color:var(--brand)}
+.info-box{background:rgba(46,134,193,.06);border:1px solid rgba(46,134,193,.2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--brand);line-height:1.5}
+.info-box b{display:block;margin-bottom:4px}
+.success-box{background:#E6F7EF;border:1px solid #B7E4CE;border-radius:10px;padding:14px;font-size:13px;color:var(--ok);display:none}
+.success-box.show{display:block}
 
-/* RESET FORM (admin) */
-.pw-rules{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6}
-
-/* FOOTER */
-.form-footer{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-.footer-txt{font-size:12px;color:var(--muted)}
-.footer-txt a{color:var(--accent);text-decoration:none;font-weight:600}
-body.role-commercial .footer-txt a{color:var(--emerald)}
-.role-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;background:rgba(var(--accent-rgb),.1);color:var(--accent);transition:var(--transition);text-transform:uppercase;letter-spacing:.4px}
-body.role-commercial .role-badge{background:rgba(var(--emerald-rgb),.1);color:var(--emerald)}
-
-/* MOBILE LOGO */
-.mobile-logo{display:none;text-align:center;margin-bottom:32px}
-@media(max-width:768px){.mobile-logo{display:block}}
-.mobile-logo .logo-mark{width:54px;height:54px;font-size:22px;margin-bottom:12px}
-.mobile-logo h2{font-size:22px;font-weight:800;color:var(--brand)}
-.mobile-logo h2 span{color:var(--accent)}
-body.role-commercial .mobile-logo h2 span{color:var(--emerald)}
+.footer{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--muted)}
 
 /* TOAST */
-.toast{position:fixed;top:24px;right:24px;z-index:999;background:var(--brand);color:#fff;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(30,58,95,.25);display:flex;align-items:center;gap:10px;transform:translateX(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);max-width:320px}
+.toast{position:fixed;top:20px;right:20px;z-index:999;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateX(120%);transition:.4s cubic-bezier(.34,1.56,.64,1);max-width:320px}
 .toast.show{transform:none}
-.toast.success{background:linear-gradient(135deg,#1E9E6A,#13784f)}
-.toast.error{background:linear-gradient(135deg,#DC2626,#991B1B)}
+.toast.success{background:linear-gradient(135deg,var(--ok),#13784f)}
+.toast.error{background:linear-gradient(135deg,var(--bad),#991B1B)}
 .toast.info{background:linear-gradient(135deg,var(--accent),var(--brand))}
 </style>
 </head>
 <body>
 
 <div class="page">
-  <!-- GAUCHE -->
-  <div class="brand-side">
-    <div class="grid-lines"></div>
-    <div class="brand-content">
-      <div class="logo-mark">SF</div>
+  <!-- GAUCHE BRAND -->
+  <div class="brand">
+    <div class="grid"></div>
+    <div class="bc">
+      <div class="logo-box">SF</div>
       <div class="brand-name">Sales<span>Flow</span> Pro</div>
       <div class="brand-tag">Plateforme de gestion commerciale · Services IT</div>
-      <div class="stats">
-        <div class="stat"><div class="stat-n">6</div><div class="stat-l">Modules</div></div>
-        <div class="stat"><div class="stat-n">2</div><div class="stat-l">Rôles</div></div>
-        <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Projets</div></div>
-      </div>
-      <div class="features">
-        <div class="feat"><div class="feat-ic">📊</div><div class="feat-txt">Pipeline & KPIs en temps réel</div></div>
-        <div class="feat"><div class="feat-ic">📄</div><div class="feat-txt">Devis → Facture en un clic</div></div>
-        <div class="feat"><div class="feat-ic">🔒</div><div class="feat-txt">Accès sécurisé par rôle</div></div>
-        <div class="feat"><div class="feat-ic">📁</div><div class="feat-txt">Rentabilité par projet</div></div>
+      <div class="feat">
+        <div class="feat-item"><div class="feat-ic">📊</div><div class="feat-txt">Dashboard & KPIs en temps réel</div></div>
+        <div class="feat-item"><div class="feat-ic">📄</div><div class="feat-txt">Devis → Facture en un clic (DT)</div></div>
+        <div class="feat-item"><div class="feat-ic">👥</div><div class="feat-txt">CRM Clients, Fournisseurs, Freelancers</div></div>
+        <div class="feat-item"><div class="feat-ic">🔒</div><div class="feat-txt">Accès détecté automatiquement</div></div>
       </div>
     </div>
   </div>
 
-  <!-- DROITE -->
+  <!-- DROITE FORM -->
   <div class="form-side">
     <div class="form-wrap">
-      <div class="mobile-logo">
-        <div class="logo-mark">SF</div>
+
+      <div class="form-logo">
+        <div class="logo-box">SF</div>
         <h2>Sales<span>Flow</span> Pro</h2>
       </div>
 
-      <!-- ══════════════════════════════
-           ÉCRAN 1 : CONNEXION
-      ══════════════════════════════ -->
-      <div class="screen active" id="screen-login">
-        <div class="form-header">
-          <h1>Connexion</h1>
-          <p>Accès réservé aux membres de l'équipe Sales</p>
-        </div>
-
-        <div class="role-label">Je suis</div>
-        <div class="role-cards">
-          <div class="role-card active" id="card-admin" onclick="selectRole('admin')">
-            <div class="role-check"></div>
-            <div class="role-icon">🛡️</div>
-            <div class="role-name">Admin</div>
-            <div class="role-desc">Sales Manager · Accès complet</div>
-          </div>
-          <div class="role-card" id="card-commercial" onclick="selectRole('commercial')">
-            <div class="role-check"></div>
-            <div class="role-icon">💼</div>
-            <div class="role-name">Commercial</div>
-            <div class="role-desc">Équipe Sales · Mon portefeuille</div>
-          </div>
-        </div>
+      <!-- ÉCRAN 1 : CONNEXION -->
+      <div class="screen on" id="sc-login">
+        <div class="form-title">Connexion</div>
+        <div class="form-sub">Entrez vos identifiants — votre rôle sera détecté automatiquement</div>
 
         <div class="field">
           <label>Adresse email</label>
-          <div class="input-wrap">
-            <span class="input-ic">✉️</span>
-            <input type="email" id="email" placeholder="prenom.nom@societe.com" autocomplete="email">
+          <div class="iw">
+            <span class="ic">✉️</span>
+            <input type="email" id="email" placeholder="votre@email.com" autocomplete="email">
           </div>
-          <div class="error-msg" id="err-email">⚠ Adresse email invalide</div>
         </div>
 
         <div class="field">
           <label>Mot de passe</label>
-          <div class="input-wrap">
-            <span class="input-ic">🔑</span>
+          <div class="iw">
+            <span class="ic">🔑</span>
             <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-            <button class="toggle-pw" onclick="togglePw()" id="pwToggle" type="button">👁️</button>
+            <button class="eye" onclick="togglePw()" id="eyeBtn">👁️</button>
           </div>
-          <div class="error-msg" id="err-pass">⚠ Mot de passe incorrect</div>
         </div>
 
-        <!-- Lien MDP oublié — change selon le rôle -->
-        <div class="forgot-link">
-          <button onclick="goForgot()" id="forgotBtn">Mot de passe oublié ?</button>
+        <div class="forgot">
+          <button onclick="showForgot()">Mot de passe oublié ?</button>
         </div>
 
-        <div class="error-msg" id="err-global" style="margin-bottom:12px;font-size:13px">⚠ Email ou mot de passe incorrect</div>
+        <div class="err" id="err-msg">❌ Email ou mot de passe incorrect</div>
 
-        <button class="btn-submit" id="loginBtn" onclick="login()">
-          <span class="btn-text" id="btnText">Se connecter</span>
+        <button class="btn-login" id="loginBtn" onclick="login()">
+          <span class="btn-txt">Se connecter</span>
           <span class="btn-loader"><div class="spin"></div></span>
         </button>
 
-        <div class="form-footer">
-          <div class="footer-txt">Compte inexistant ? <a href="#">Contacter l'Admin</a></div>
-          <div class="role-badge" id="roleBadge">🛡️ Admin</div>
-        </div>
+        <div class="footer">Accès réservé aux membres de l'équipe Sales interne</div>
       </div>
 
-      <!-- ══════════════════════════════
-           ÉCRAN 2 : MDP OUBLIÉ — COMMERCIAL
-           → Reçoit son MDP actuel par email
-           → Ne peut PAS le changer
-      ══════════════════════════════ -->
-      <div class="screen" id="screen-forgot-commercial">
-        <button class="back-btn" onclick="goBack()">← Retour à la connexion</button>
-        <div class="form-header">
-          <h1>Mot de passe oublié</h1>
-          <p>Tu vas recevoir ton mot de passe actuel par email</p>
-        </div>
+      <!-- ÉCRAN 2 : MOT DE PASSE OUBLIÉ -->
+      <div class="screen" id="sc-forgot">
+        <button class="back" onclick="showLogin()">← Retour</button>
+        <div class="form-title">Mot de passe oublié</div>
+        <div class="form-sub">Reçois un lien de réinitialisation par email</div>
 
-        <div class="info-box blue">
-          <b>💼 Espace Commercial</b>
-          Saisis ton adresse email. Si elle est reconnue, tu recevras ton mot de passe actuel dans ta boîte mail. Pour tout changement de mot de passe, contacte ton Sales Manager.
+        <div class="info-box">
+          <b>📧 Réinitialisation sécurisée</b>
+          Saisis ton adresse email. Tu recevras un lien pour définir un nouveau mot de passe.
         </div>
 
         <div class="field">
-          <label>Ton adresse email</label>
-          <div class="input-wrap">
-            <span class="input-ic">✉️</span>
-            <input type="email" id="forgot-com-email" placeholder="prenom.nom@societe.com">
+          <label>Adresse email</label>
+          <div class="iw">
+            <span class="ic">✉️</span>
+            <input type="email" id="forgot-email" placeholder="votre@email.com">
           </div>
-          <div class="error-msg" id="err-forgot-com">⚠ Email non reconnu dans le système</div>
         </div>
 
-        <button class="btn-submit" id="forgotComBtn" onclick="sendComPassword()">
-          <span class="btn-text">📧 Recevoir mon mot de passe</span>
+        <div class="err" id="err-forgot">❌ Email non reconnu</div>
+        <div class="success-box" id="success-forgot">
+          ✅ Email envoyé ! Vérifie ta boîte mail et clique sur le lien reçu.
+        </div>
+
+        <button class="btn-login" id="forgotBtn" onclick="sendReset()">
+          <span class="btn-txt">📧 Envoyer le lien</span>
           <span class="btn-loader"><div class="spin"></div></span>
         </button>
-
-        <!-- Confirmation envoi -->
-        <div class="info-box green" id="forgot-com-success" style="display:none;margin-top:16px">
-          <b>✅ Email envoyé !</b>
-          Ton mot de passe actuel a été envoyé à <span id="sent-to-email" style="font-weight:700"></span>. Vérifie ta boîte mail (et tes spams). Pour changer ton mot de passe, parle à ton Sales Manager.
-        </div>
-
-        <div class="info-box warn" style="margin-top:16px">
-          ⚠️ Tu ne peux pas modifier ton mot de passe toi-même. Si tu souhaites le changer, contacte l'Admin.
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════
-           ÉCRAN 3 : MDP OUBLIÉ — ADMIN
-           → Peut réinitialiser son propre MDP
-      ══════════════════════════════ -->
-      <div class="screen" id="screen-forgot-admin">
-        <button class="back-btn" onclick="goBack()">← Retour à la connexion</button>
-        <div class="form-header">
-          <h1>Réinitialiser le mot de passe</h1>
-          <p>Espace Admin · Accès complet</p>
-        </div>
-
-        <div class="info-box blue">
-          <b>🛡️ Espace Admin</b>
-          Saisis ton email pour recevoir un lien de réinitialisation sécurisé. Tu pourras définir un nouveau mot de passe.
-        </div>
-
-        <!-- Étape 1 : email -->
-        <div id="admin-step1">
-          <div class="field">
-            <label>Ton adresse email Admin</label>
-            <div class="input-wrap">
-              <span class="input-ic">✉️</span>
-              <input type="email" id="forgot-admin-email" placeholder="admin@societe.com">
-            </div>
-            <div class="error-msg" id="err-forgot-admin">⚠ Email Admin non reconnu</div>
-          </div>
-          <button class="btn-submit" onclick="sendAdminReset()">
-            <span class="btn-text">📧 Envoyer le lien de réinitialisation</span>
-            <span class="btn-loader"><div class="spin"></div></span>
-          </button>
-        </div>
-
-        <!-- Étape 2 : nouveau MDP (après lien reçu — simulé ici) -->
-        <div id="admin-step2" style="display:none">
-          <div class="info-box green" style="margin-bottom:16px">
-            <b>✅ Lien reçu · Définis ton nouveau mot de passe</b>
-          </div>
-          <div class="field">
-            <label>Nouveau mot de passe</label>
-            <div class="input-wrap">
-              <span class="input-ic">🔑</span>
-              <input type="password" id="new-pw1" placeholder="Minimum 8 caractères">
-              <button class="toggle-pw" onclick="toggleNewPw()" id="newPwToggle" type="button">👁️</button>
-            </div>
-            <div class="pw-rules">✔ Min. 8 caractères · ✔ 1 majuscule · ✔ 1 chiffre</div>
-          </div>
-          <div class="field">
-            <label>Confirmer le mot de passe</label>
-            <div class="input-wrap">
-              <span class="input-ic">🔑</span>
-              <input type="password" id="new-pw2" placeholder="Répète le mot de passe">
-            </div>
-            <div class="error-msg" id="err-pw-match">⚠ Les mots de passe ne correspondent pas</div>
-          </div>
-          <button class="btn-submit" onclick="confirmReset()">
-            <span class="btn-text">✅ Enregistrer le nouveau mot de passe</span>
-            <span class="btn-loader"><div class="spin"></div></span>
-          </button>
-        </div>
       </div>
 
     </div>
@@ -404,235 +194,158 @@ body.role-commercial .mobile-logo h2 span{color:var(--emerald)}
 <div class="toast" id="toast"></div>
 
 <script>
-const DEMO_USERS = [
-  { email:'admin@salesflow.tn',      password:'Admin2026!',  role:'admin',      name:'Sales Manager' },
-  { email:'commercial@salesflow.tn', password:'Sales2026!',  role:'commercial', name:'Commercial Demo' },
+const SB_URL = "https://gmyrrcctklpflyfmgixv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteXJyY2N0a2xwZmx5Zm1naXh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE1NDQsImV4cCI6MjA5ODAzNzU0NH0.e0dqMOfbj9tZBtUWnwPaCSkpC69N7gbj7FQ2vhqWCjc";
+
+// Comptes démo (fallback si Supabase Auth pas encore configuré)
+const DEMO = [
+  { email:"admin@salesflow.tn",      password:"Admin2026!", role:"admin",      name:"Sales Manager" },
+  { email:"commercial@salesflow.tn", password:"Sales2026!", role:"commercial", name:"Commercial Demo" },
 ];
 
-let currentRole = 'admin';
-let pwVisible = false;
-let newPwVisible = false;
-
-/* ── Rôle ── */
-function selectRole(role) {
-  currentRole = role;
-  document.body.className = role === 'commercial' ? 'role-commercial' : '';
-  document.getElementById('card-admin').classList.toggle('active', role === 'admin');
-  document.getElementById('card-commercial').classList.toggle('active', role === 'commercial');
-  document.getElementById('roleBadge').innerHTML = role === 'admin' ? '🛡️ Admin' : '💼 Commercial';
-  document.getElementById('btnText').textContent = role === 'admin' ? "Se connecter en tant qu'Admin" : "Se connecter en tant que Commercial";
-  clearErrors();
-}
-
 /* ── Toggle MDP ── */
+let pwVisible = false;
 function togglePw() {
   pwVisible = !pwVisible;
   document.getElementById('password').type = pwVisible ? 'text' : 'password';
-  document.getElementById('pwToggle').textContent = pwVisible ? '🙈' : '👁️';
-}
-function toggleNewPw() {
-  newPwVisible = !newPwVisible;
-  document.getElementById('new-pw1').type = newPwVisible ? 'text' : 'password';
-  document.getElementById('newPwToggle').textContent = newPwVisible ? '🙈' : '👁️';
+  document.getElementById('eyeBtn').textContent = pwVisible ? '🙈' : '👁️';
 }
 
-/* ── Navigation entre écrans ── */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+/* ── Écrans ── */
+function showForgot() {
+  document.getElementById('sc-login').classList.remove('on');
+  document.getElementById('sc-forgot').classList.add('on');
+}
+function showLogin() {
+  document.getElementById('sc-forgot').classList.remove('on');
+  document.getElementById('sc-login').classList.add('on');
+  document.getElementById('success-forgot').classList.remove('show');
+  document.getElementById('err-forgot').classList.remove('show');
 }
 
-function goForgot() {
-  if (currentRole === 'commercial') {
-    showScreen('screen-forgot-commercial');
-  } else {
-    showScreen('screen-forgot-admin');
-  }
-}
-
-function goBack() {
-  showScreen('screen-login');
-  document.getElementById('forgot-com-success').style.display = 'none';
-  document.getElementById('err-forgot-com').classList.remove('show');
-  document.getElementById('err-forgot-admin').classList.remove('show');
-  document.getElementById('admin-step1').style.display = 'block';
-  document.getElementById('admin-step2').style.display = 'none';
-}
-
-/* ── Effacer erreurs ── */
-function clearErrors() {
-  ['err-email','err-pass','err-global'].forEach(id => {
-    document.getElementById(id).classList.remove('show');
-  });
-  document.getElementById('email').style.borderColor = '';
-  document.getElementById('password').style.borderColor = '';
-}
-
-/* ── Connexion ── */
-function validate() {
-  clearErrors();
-  const email = document.getElementById('email').value.trim();
-  const pass  = document.getElementById('password').value;
-  let ok = true;
-  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-    document.getElementById('err-email').classList.add('show');
-    document.getElementById('email').style.borderColor = 'var(--error)';
-    ok = false;
-  }
-  if (!pass || pass.length < 4) {
-    document.getElementById('err-pass').classList.add('show');
-    document.getElementById('password').style.borderColor = 'var(--error)';
-    ok = false;
-  }
-  return ok;
-}
-
+/* ── LOGIN ── */
 async function login() {
-  if (!validate()) return;
-  const btn = document.getElementById('loginBtn');
+  const email    = document.getElementById('email').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const errEl    = document.getElementById('err-msg');
+  const btn      = document.getElementById('loginBtn');
+
+  errEl.classList.remove('show');
+  if (!email || !password) { errEl.textContent = '❌ Remplis tous les champs'; errEl.classList.add('show'); return; }
+
   btn.classList.add('loading'); btn.disabled = true;
 
-  const email = document.getElementById('email').value.trim().toLowerCase();
-  const pass  = document.getElementById('password').value;
-
   try {
-    // Connexion via Supabase Auth
-    let data = null, error = null;
-    try { data = await sbAuth(email, pass); }
-    catch(e) { error = e; }
+    // 1. Essayer Supabase Auth
+    const r = await fetch(SB_URL + "/auth/v1/token?grant_type=password", {
+      method: "POST",
+      headers: { "apikey": SB_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await r.json();
 
-    if (error || !data) {
-      // Fallback comptes demo si Supabase échoue
-      const DEMO = [
-        { email:'admin@salesflow.tn',      password:'Admin2026!',  role:'admin',      name:'Sales Manager' },
-        { email:'commercial@salesflow.tn', password:'Sales2026!',  role:'commercial', name:'Commercial Demo' },
-      ];
-      const demo = DEMO.find(u => u.email===email && u.password===pass && u.role===currentRole);
-      if (demo) {
-        localStorage.setItem('sf_role', demo.role);
-        localStorage.setItem('sf_user', demo.name);
-        localStorage.setItem('sf_email', demo.email);
-        btn.classList.remove('loading'); btn.disabled = false;
-        showToast("✅ Bienvenue, " + demo.name + " !", 'success');
-        setTimeout(() => {
-          window.location.href = demo.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
-        }, 1000);
-        return;
-      }
-      throw error;
+    if (r.ok && data.access_token) {
+      // Connexion Supabase réussie
+      const user = data.user;
+      // Lire le rôle depuis user_metadata
+      const role = (user.user_metadata && user.user_metadata.role) ? user.user_metadata.role : 'commercial';
+      const name = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : email.split('@')[0];
+
+      localStorage.setItem('sf_role',  role);
+      localStorage.setItem('sf_user',  name);
+      localStorage.setItem('sf_email', email);
+      localStorage.setItem('sf_token', data.access_token);
+
+      showToast('✅ Bienvenue ' + name + ' !', 'success');
+      setTimeout(() => {
+        window.location.href = role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+      }, 900);
+      return;
     }
 
-    // Récupérer le rôle depuis les métadonnées ou la table profiles
-    const role = (data.user && data.user.user_metadata && data.user.user_metadata.role) ? data.user.user_metadata.role : currentRole;
-    const name = (data.user && data.user.user_metadata && data.user.user_metadata.full_name) ? data.user.user_metadata.full_name : (data.user ? data.user.email.split('@')[0] : 'Utilisateur');
+    // 2. Fallback comptes démo
+    const demo = DEMO.find(u => u.email === email && u.password === password);
+    if (demo) {
+      localStorage.setItem('sf_role',  demo.role);
+      localStorage.setItem('sf_user',  demo.name);
+      localStorage.setItem('sf_email', demo.email);
+      localStorage.setItem('sf_token', 'demo');
 
-    localStorage.setItem('sf_role', role);
-    localStorage.setItem('sf_user', name);
-    localStorage.setItem('sf_email', email);
-    localStorage.setItem('sf_token', (data.access_token || ''));
+      showToast('✅ Bienvenue ' + demo.name + ' !', 'success');
+      setTimeout(() => {
+        window.location.href = demo.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+      }, 900);
+      return;
+    }
 
-    btn.classList.remove('loading'); btn.disabled = false;
-    showToast("✅ Bienvenue, " + name + " !", 'success');
-    setTimeout(() => {
-      window.location.href = role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
-    }, 1000);
+    // 3. Échec
+    throw new Error('Identifiants incorrects');
 
   } catch(e) {
+    errEl.textContent = '❌ ' + (e.message || 'Email ou mot de passe incorrect');
+    errEl.classList.add('show');
+    document.getElementById('email').style.borderColor    = 'var(--bad)';
+    document.getElementById('password').style.borderColor = 'var(--bad)';
+    document.getElementById('email').addEventListener('input', () => {
+      document.getElementById('email').style.borderColor    = '';
+      document.getElementById('password').style.borderColor = '';
+    }, {once:true});
+  } finally {
     btn.classList.remove('loading'); btn.disabled = false;
-    document.getElementById('err-global').classList.add('show');
-    document.getElementById('email').style.borderColor = 'var(--error)';
-    document.getElementById('password').style.borderColor = 'var(--error)';
-    shake(document.querySelector('.form-wrap'));
-    showToast('❌ Email ou mot de passe incorrect', 'error');
   }
 }
 
-/* ── MDP OUBLIÉ — COMMERCIAL ──
-   Envoie le mot de passe actuel par email (simulé)
-   Le commercial NE PEUT PAS le changer lui-même        */
-async function sendComPassword() {
-  const email = document.getElementById('forgot-com-email').value.trim().toLowerCase();
-  const errEl = document.getElementById('err-forgot-com');
+/* ── RESET MDP ── */
+async function sendReset() {
+  const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('err-forgot');
+  const btn   = document.getElementById('forgotBtn');
   errEl.classList.remove('show');
-  document.getElementById('forgot-com-success').style.display = 'none';
+  document.getElementById('success-forgot').classList.remove('show');
 
-  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-    errEl.classList.add('show'); return;
-  }
+  if (!email) { errEl.textContent = '❌ Saisis ton email'; errEl.classList.add('show'); return; }
 
-  const btn = document.getElementById('forgotComBtn');
   btn.classList.add('loading'); btn.disabled = true;
-  await new Promise(r => setTimeout(r, 1500));
-  btn.classList.remove('loading'); btn.disabled = false;
-
-  const user = DEMO_USERS.find(u => u.email === email && u.role === 'commercial');
-  if (!user) {
-    errEl.classList.add('show');
-    showToast('❌ Email non trouvé parmi les commerciaux', 'error');
-    return;
-  }
-
-  /* En production → Supabase Edge Function envoie l'email avec le MDP actuel */
-  document.getElementById('sent-to-email').textContent = email;
-  document.getElementById('forgot-com-success').style.display = 'block';
-  showToast('📧 Mot de passe envoyé à ' + email, 'success');
-
-  /* Simulation : on affiche le MDP dans la console (dev uniquement) */
-  console.log(`[DEV] MDP de ${email} : ${user.password}`);
-}
-
-/* ── MDP OUBLIÉ — ADMIN ──
-   Peut réinitialiser son propre MDP            */
-async function sendAdminReset() {
-  const email = document.getElementById('forgot-admin-email').value.trim().toLowerCase();
-  const errEl = document.getElementById('err-forgot-admin');
-  errEl.classList.remove('show');
-  if (!email || !/^[^@]+@[^@]+[.][^@]+$/.test(email)) { errEl.classList.add('show'); return; }
   try {
-    await sbResetPassword(email);
-    showToast('📧 Lien de réinitialisation envoyé à ' + email, 'success');
-    setTimeout(() => {
-      document.getElementById('admin-step1').style.display = 'none';
-      document.getElementById('admin-step2').style.display = 'block';
-    }, 1000);
+    const r = await fetch(SB_URL + "/auth/v1/recover", {
+      method: "POST",
+      headers: { "apikey": SB_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+    document.getElementById('success-forgot').classList.add('show');
+    showToast('📧 Email envoyé à ' + email, 'success');
   } catch(e) {
-    showToast('❌ Email non reconnu', 'error');
+    errEl.textContent = '❌ ' + (e.message || 'Erreur');
     errEl.classList.add('show');
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
   }
 }
 
-async function confirmReset() {
-  const pw1 = document.getElementById('new-pw1').value;
-  const pw2 = document.getElementById('new-pw2').value;
-  const errEl = document.getElementById('err-pw-match');
-  errEl.classList.remove('show');
+/* ── ENTER ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('sc-login').classList.contains('on')) login();
+    else if (document.getElementById('sc-forgot').classList.contains('on')) sendReset();
+  }
+});
 
-  if (pw1.length < 8) { showToast('⚠️ Mot de passe trop court (min. 8 car.)', 'error'); return; }
-  if (pw1 !== pw2) { errEl.classList.add('show'); return; }
-
-  await new Promise(r => setTimeout(r, 1200));
-
-  /* En production → Supabase Auth updateUser */
-  DEMO_USERS.find(u => u.role === 'admin').password = pw1;
-  showToast('✅ Mot de passe mis à jour ! Reconnecte-toi.', 'success');
-  setTimeout(() => { goBack(); }, 1500);
-}
-
-/* ── Utils ── */
-function shake(el) {
-  el.style.animation = 'none'; el.offsetHeight;
-  el.style.animation = 'shake .4s ease';
-}
-function showToast(msg, type='') {
+/* ── TOAST ── */
+function showToast(msg, type='info') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast ' + type;
   void t.offsetWidth; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('screen-login').classList.contains('active')) login(); });
-const style = document.createElement('style');
-style.textContent = `@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`;
-document.head.appendChild(style);
+
+/* ── Vérifier si déjà connecté ── */
+(function() {
+  const role = localStorage.getItem('sf_role');
+  const token = localStorage.getItem('sf_token');
+  if (role && token) {
+    window.location.href = role === 'admin' ? 'dashboard-admin.html' : 'dashboard-commercial.html';
+  }
+})();
 </script>
 </body>
 </html>
